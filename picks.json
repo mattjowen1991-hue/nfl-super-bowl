@@ -1,1 +1,10 @@
+{
+  "matt":   { "afcTeam": "Kansas City Chiefs",   "nfcTeam": "Detroit Lions" },
+  "gaz":    { "afcTeam": "Buffalo Bills",        "nfcTeam": "Green Bay Packers" },
+  "colesy": { "afcTeam": "Denver Broncos",       "nfcTeam": "Minnesota Vikings" },
+  "jarv":   { "afcTeam": "Baltimore Ravens",     "nfcTeam": "Los Angeles Rams" },
+  "joe":    { "afcTeam": "Los Angeles Chargers", "nfcTeam": "Tampa Bay Buccaneers" },
+  "ben":    { "afcTeam": "Pittsburgh Steelers",  "nfcTeam": "Philadelphia Eagles" },
+  "mark":   { "afcTeam": "Houston Texans",       "nfcTeam": "Washington Commanders" }
+}
 
