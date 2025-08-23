@@ -1,1 +1,18 @@
+[
+  {
+    "week": 1,
+    "games": 6,
+    "scores": { "matt": 0, "gaz": 0, "colesy": 0, "jarv": 0, "joe": 0, "ben": 0, "mark": 0 }
+  },
+  {
+    "week": 2,
+    "games": 6,
+    "scores": { "matt": 0, "gaz": 0, "colesy": 0, "jarv": 0, "joe": 0, "ben": 0, "mark": 0 }
+  },
+  {
+    "week": 3,
+    "games": 6,
+    "scores": { "matt": 0, "gaz": 0, "colesy": 0, "jarv": 0, "joe": 0, "ben": 0, "mark": 0 }
+  }
+]
 
