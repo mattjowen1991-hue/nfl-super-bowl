@@ -127,39 +127,7 @@
           <tbody id="playerPicksBody"></tbody>
         </table>
       </div>
-    </section>
-
-    <!-- Leaderboard Cards -->
-    <section id="leaderboard" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"></section>
-  </main>
-
-  <!-- Player Profile Modal -->
-  <div id="profileModal" class="modal-hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/70"></div>
-    <div class="relative mx-auto mt-10 sm:mt-16 max-w-xl bg-black rounded-2xl shadow-xl shadow-black/50 p-5 sm:p-6">
-      <button id="closeProfile" class="absolute right-3 top-3 text-white/70 hover:text-white" aria-label="Close">✕</button>
-      <div class="flex items-start gap-4">
-        <img id="profileAvatar" src="" alt="Player avatar" class="w-20 h-20 rounded-full ring-2 ring-amber-400 object-cover" />
-        <div class="flex-1">
-          <div class="flex items-center gap-2">
-            <h3 id="profileName" class="text-2xl font-bold"></h3>
-            <span id="profileTeamPill" class="inline-flex items-center gap-2 text-xs px-2.5 py-1 rounded-full bg-white/10 ring-1 ring-white/20"></span>
-          </div>
-          <div class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-3" id="profileStats"></div>
-          <button id="toggleMetricsHelp" class="mt-4 text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Metrics Explained</button>
-          <div id="metricsHelp" class="hidden mt-3 text-sm leading-relaxed text-white/80">
-            <p><span class="rule-key">Total Points</span>: Sum of weekly points.</p>
-            <p><span class="rule-key">Games Played</span>: Sum of weekly games (or best available fallback).</p>
-            <p><span class="rule-key">Avg/Game</span>: Total points ÷ Games Played.</p>
-            <p><span class="rule-key">Best Week</span>: Highest weekly score.</p>
-            <p><span class="rule-key">Longest Streak</span>: Most consecutive weeks scoring ≥ 1 point.</p>
-            <p><span class="rule-key">Perfect Weeks</span>: Weeks where the player's score hit that week's perfect threshold.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
+    </section>  </main>
   <!-- Rules Modal -->
   <div id="rulesModal" class="modal-hidden fixed inset-0 z-50">
     <div class="absolute inset-0 bg-black/70"></div>
@@ -306,143 +274,8 @@
     }
 
     // -------- Rendering: Leaderboard -------- //
-    function renderLeaderboardTotal(players, aggregates) {
-      const board = document.getElementById('leaderboard');
-      board.innerHTML = '';
-      const sorted = [...players].sort((a,b)=>{
-        const da = aggregates.totals[a.id]; const db = aggregates.totals[b.id];
-        if (db!==da) return db-da; // desc by total
-        return a.name.localeCompare(b.name);
-      });
-      sorted.forEach((p, idx)=>{
-        const rank = idx+1; const medal = medalForRank(rank);
-        const total = aggregates.totals[p.id]||0;
-        const games = Math.max(1, aggregates.gamesPlayed[p.id]||0);
-        const avg = (total/games).toFixed(3);
-        const perfect = aggregates.perfectWeeks[p.id]||0;
-        const best = aggregates.bestWeek[p.id];
-        const card = document.createElement('article');
-        card.className = 'bg-black rounded-2xl p-4 sm:p-5 shadow-lg shadow-black/50 card-hover ring-1 ring-white/10';
-        card.tabIndex = 0;
-        card.dataset.playerId = p.id;
-        card.innerHTML = `
-          <div class="flex items-center gap-3">
-            <img src="${p.avatar}" alt="${p.name}" class="w-14 h-14 rounded-full object-cover ring-2 ring-white/10"/>
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <h3 class="text-lg font-bold">${medal?`<span>${medal}</span>`:''}${p.name}</h3>
-                ${p.teamLogo?`<img src="${p.teamLogo}" alt="${p.team} logo" class="w-5 h-5">`:''}
-              </div>
-              <div class="text-xs text-white/60">${p.team||''}</div>
-            </div>
-            <div class="text-right">
-              <div class="text-2xl font-black text-amber-400" style="font-family: Freshman">${total}</div>
-              <div class="text-[10px] text-white/60">TOTAL</div>
-            </div>
-          </div>
-          
-          <div class="mt-3 flex justify-end">
-            <button class="profile-btn text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 ring-1 ring-white/10">Profile</button>
-          </div>
-        `;
-        // click to highlight
-        card.addEventListener('click', (e)=>{
-          if (e.target && e.target.classList.contains('profile-btn')) return; // let button open modal
-          card.classList.toggle('ring-amber-400');
-          card.classList.toggle('ring-2');
-        });
-        // open profile
-        card.querySelector('.profile-btn').addEventListener('click', (e)=>{
-          e.stopPropagation();
-          openProfile(p, aggregates);
-        });
-        board.appendChild(card);
-      });
-    }
-
-    function renderLeaderboardWeek(players, weekObj, perfectMap) {
-      const board = document.getElementById('leaderboard');
-      board.innerHTML = '';
-      const games = computeWeekGames(weekObj, perfectMap);
-      const entries = players.map(p=>({ player:p, pts: Number(weekObj.scores[p.id]||0) }));
-      entries.sort((a,b)=>b.pts-a.pts || a.player.name.localeCompare(b.player.name));
-      entries.forEach((row, idx)=>{
-        const rank = idx+1; const medal = medalForRank(rank);
-        const perfect = (row.pts >= (games||Number(perfectMap?.[String(weekObj.week)]||0))) && (games||Number(perfectMap?.[String(weekObj.week)]||0))>0;
-        const card = document.createElement('article');
-        card.className = 'bg-black rounded-2xl p-4 sm:p-5 shadow-lg shadow-black/50 card-hover ring-1 ring-white/10';
-        card.tabIndex = 0;
-        card.dataset.playerId = row.player.id;
-        card.innerHTML = `
-          <div class="flex items-center gap-3">
-            <img src="${row.player.avatar}" alt="${row.player.name}" class="w-14 h-14 rounded-full object-cover ring-2 ring-white/10"/>
-            <div class="flex-1">
-              <div class="flex items-center gap-2">
-                <h3 class="text-lg font-bold">${medal?`<span>${medal}</span>`:''}${row.player.name}</h3>
-                ${row.player.teamLogo?`<img src="${row.player.teamLogo}" alt="${row.player.team} logo" class="w-5 h-5">`:''}
-              </div>
-              <div class="text-xs text-white/60">${row.player.team||''}</div>
-            </div>
-            <div class="text-right">
-              <div class="text-2xl font-black ${perfect?'text-emerald-400':'text-amber-400'}" style="font-family: Freshman">${row.pts}</div>
-              <div class="text-[10px] text-white/60">WEEK ${weekObj.week}${perfect?' • PERFECT':''}</div>
-            </div>
-          </div>
-          <div class="mt-3 flex justify-end">
-            <button class="profile-btn text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 ring-1 ring-white/10">Profile</button>
-          </div>
-        `;
-        card.addEventListener('click', (e)=>{ if (e.target && e.target.classList.contains('profile-btn')) return; card.classList.toggle('ring-amber-400'); card.classList.toggle('ring-2'); });
-        card.querySelector('.profile-btn').addEventListener('click', (e)=>{ e.stopPropagation(); openProfile(row.player, window.__aggregates); });
-        board.appendChild(card);
-      });
-    }
-
-    // -------- Profile Modal -------- //
-    function openProfile(player, aggregates) {
-      const modal = document.getElementById('profileModal');
-      document.getElementById('profileAvatar').src = player.avatar;
-      document.getElementById('profileName').textContent = player.name;
-      const pill = document.getElementById('profileTeamPill');
-      pill.innerHTML = `${player.teamLogo?`<img src="${player.teamLogo}" class="w-4 h-4">`:''}<span>${player.team||''}</span>`;
-
-      const total = aggregates.totals[player.id]||0;
-      const games = Math.max(1, aggregates.gamesPlayed[player.id]||0);
-      const avg = (total/games).toFixed(3);
-      const best = aggregates.bestWeek[player.id];
-      const pWeeks = aggregates.perfectWeeks[player.id]||0;
-      const streak = aggregates.longestStreak[player.id]||0;
-
-      const stats = [
-        { k:'Total Points', v: total },
-        { k:'Games Played', v: games },
-        { k:'Avg/Game', v: avg },
-        { k:'Best Week', v: (best?.week?`W${best.week} • ${best.pts} pts`:'—') },
-        { k:'Longest Streak', v: streak },
-        { k:'Perfect Weeks', v: pWeeks },
-      ];
-      const wrap = document.getElementById('profileStats');
-      wrap.innerHTML = '';
-      stats.forEach(s=>{
-        const el = document.createElement('div');
-        el.className = 'rounded-lg bg-white/5 p-3 text-center';
-        el.innerHTML = `<div class="text-white/70 text-xs">${s.k}</div><div class="font-semibold">${s.v}</div>`;
-        wrap.appendChild(el);
-      });
-
-      modal.classList.remove('modal-hidden');
-      modal.classList.add('modal-shown');
-      document.body.classList.add('no-scroll');
-    }
-
-    function closeProfile(){
-      const modal = document.getElementById('profileModal');
-      modal.classList.add('modal-hidden');
-      modal.classList.remove('modal-shown');
-      document.body.classList.remove('no-scroll');
-    }
-
-    // -------- Rules Modal -------- //
+            // -------- Profile Modal -------- //
+            // -------- Rules Modal -------- //
     function openRules(){
       const modal = document.getElementById('rulesModal');
       modal.classList.remove('modal-hidden');
@@ -508,31 +341,11 @@
 
       // Picks table (old page feature)
       renderPicks(players, picks, eliminated);
-
-      // Aggregates for leaderboard
-      const perfectMap = config.perfectWeekPoints || {};
-      const aggs = computeAggregates(players, weeks, perfectMap);
-      window.__aggregates = aggs;
-
-      // Default view
-      state.weekIndex = Math.max(0, weeks.length - 1); // show latest week in Week view
-      const wkLbl = document.getElementById('currentWeekLabel'); if (wkLbl) wkLbl.textContent = weeks[state.weekIndex]?.week ?? 1; 
-      renderLeaderboardTotal(players, aggs);
-
       // Control wiring removed (no Total/Week toggle or week nav).
-      // Profile modal
-      document.getElementById('closeProfile').addEventListener('click', closeProfile);
-      document.getElementById('profileModal').addEventListener('click', (e)=>{ if (e.target === e.currentTarget) closeProfile(); });
-
       // Rules modal
       document.getElementById('openRules').addEventListener('click', openRules);
       document.getElementById('closeRules').addEventListener('click', closeRules);
-      document.getElementById('rulesModal').addEventListener('click', (e)=>{ if (e.target === e.currentTarget) closeRules(); });
-
-      // Metrics help toggle
-      document.getElementById('toggleMetricsHelp').addEventListener('click', ()=>{
-        const el = document.getElementById('metricsHelp');
-        el.classList.toggle('hidden');
+      document.getElementById('rulesModal').addEventListener('click', (e)=>{ if (e.target === e.currentTarget) closeRules(); });        el.classList.toggle('hidden');
       });
 
       // ESC closes modals
