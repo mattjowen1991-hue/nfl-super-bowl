@@ -145,217 +145,119 @@
   </div>
 
   <script>
-    // -------- Data Loading with graceful fallbacks -------- //
-    const fallbackPlayers = [
-      { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png', team: '49ers', teamLogo: 'Assets/49ers.png' },
-      { id: 'gaz', name: 'Gaz', avatar: 'Assets/gaz.png', team: 'Bills', teamLogo: 'Assets/Bills.png' },
-      { id: 'joe', name: 'Joe', avatar: 'Assets/joe.png', team: 'Lions', teamLogo: 'Assets/Lions.png' },
-      { id: 'ben', name: 'Ben', avatar: 'Assets/ben.png', team: 'Eagles', teamLogo: 'Assets/Eagles.png' },
-      { id: 'mark', name: 'Mark', avatar: 'Assets/mark.png', team: 'Texans', teamLogo: 'Assets/Texans.png' }
-    ];
+  // --- Minimal, safe script (no leaderboard/cards) ---
+  const fallbackPlayers = [
+    { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png', team: '49ers', teamLogo: 'Assets/49ers.png' },
+    { id: 'gaz', name: 'Gaz', avatar: 'Assets/gaz.png', team: 'Bills', teamLogo: 'Assets/Bills.png' },
+    { id: 'colesy', name: 'Colesy', avatar: 'Assets/coley.png', team: 'Vikings', teamLogo: 'Assets/Vikings.png' },
+    { id: 'jarv', name: 'Jarv', avatar: 'Assets/jarv.png', team: 'Rams', teamLogo: 'Assets/Rams.png' },
+    { id: 'joe', name: 'Joe', avatar: 'Assets/joe.png', team: 'Lions', teamLogo: 'Assets/Lions.png' },
+    { id: 'ben', name: 'Ben', avatar: 'Assets/ben.png', team: 'Eagles', teamLogo: 'Assets/Eagles.png' },
+    { id: 'mark', name: 'Mark', avatar: 'Assets/mark.png', team: 'Texans', teamLogo: 'Assets/Texans.png' }
+  ];
+  const fallbackConfig = {
+    season: '2025',
+    repoUrl: 'https://github.com/your/repo',
+    highlight: { winner: null, spoon: null },
+    honorary: [ { year: 2024, player: 'matt' } ]
+  };
+  const fallbackPicks = {
+    matt:{afcTeam:'Kansas City Chiefs', nfcTeam:'Detroit Lions'},
+    gaz:{afcTeam:'Buffalo Bills', nfcTeam:'Green Bay Packers'},
+    colesy:{afcTeam:'Denver Broncos', nfcTeam:'Minnesota Vikings'},
+    jarv:{afcTeam:'Baltimore Ravens', nfcTeam:'Los Angeles Rams'},
+    joe:{afcTeam:'Los Angeles Chargers', nfcTeam:'Tampa Bay Buccaneers'},
+    ben:{afcTeam:'Pittsburgh Steelers', nfcTeam:'Philadelphia Eagles'},
+    mark:{afcTeam:'Houston Texans', nfcTeam:'Washington Commanders'}
+  };
+  const fallbackEliminated = [
+    'Minnesota Vikings','Los Angeles Chargers','Pittsburgh Steelers','Denver Broncos','Green Bay Packers','Tampa Bay Buccaneers','Detroit Lions','Los Angeles Rams','Baltimore Ravens','Houston Texans'
+  ];
 
-    const fallbackWeeks = [
-      { week: 1, scores: { matt: 3, gaz: 5, joe: 4, ben: 2, mark: 1 }, games: 6 },
-      { week: 2, scores: { matt: 6, gaz: 4, joe: 5, ben: 1, mark: 0 }, games: 6 },
-      { week: 3, scores: { matt: 2, gaz: 1, joe: 3, ben: 5, mark: 4 }, games: 6 },
-      { week: 4, scores: { matt: 5, gaz: 6, joe: 0, ben: 2, mark: 3 }, games: 6 }
-    ];
+  async function fetchJson(path, fallback){
+    try { const res = await fetch(path, {cache:'no-store'}); if(!res.ok) throw 0; return await res.json(); }
+    catch{ return structuredClone(fallback); }
+  }
+  function indexBy(arr, key='id'){ const m=new Map(); arr.forEach(o=>m.set(o[key],o)); return m; }
 
-    const fallbackConfig = {
-      season: '2025',
-      repoUrl: 'https://github.com/your/repo',
-      highlight: { winner: 'matt', spoon: 'mark' },
-      honorary: [ { year: 2024, player: 'matt' } ],
-      perfectWeekPoints: { '1': 6, '2': 6, '3': 6, '4': 6 }
-    };
-
-    // Super Bowl picks (old page carry-over) — optional file
-    const fallbackPicks = {
-      matt: { afcTeam: 'Kansas City Chiefs', nfcTeam: 'Detroit Lions' },
-      gaz:  { afcTeam: 'Buffalo Bills', nfcTeam: 'Green Bay Packers' },
-      joe:  { afcTeam: 'Los Angeles Chargers', nfcTeam: 'Tampa Bay Buccaneers' },
-      ben:  { afcTeam: 'Pittsburgh Steelers', nfcTeam: 'Philadelphia Eagles' },
-      mark: { afcTeam: 'Houston Texans', nfcTeam: 'Washington Commanders' }
-    };
-
-    const fallbackEliminated = [
-      'Minnesota Vikings','Los Angeles Chargers','Pittsburgh Steelers','Denver Broncos','Green Bay Packers','Tampa Bay Buccaneers','Detroit Lions','Los Angeles Rams','Baltimore Ravens','Houston Texans'
-    ];
-
-    async function fetchJson(path, fallback) {
-      try {
-        const res = await fetch(path, { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return await res.json();
-      } catch (e) {
-        console.warn('Using fallback for', path, e);
-        return structuredClone(fallback);
-      }
-    }
-
-    // -------- Utility computations -------- //
-    function indexBy(arr, key='id') { const map = new Map(); arr.forEach(o=>map.set(o[key], o)); return map; }
-
-    function computeWeekGames(weekObj, perfectMap) {
-      const explicit = Number(weekObj.games || 0);
-      if (explicit) return explicit;
-      const pw = Number(perfectMap?.[String(weekObj.week)] || 0);
-      if (pw) return pw;
-      // fallback to that week's top score
-      let top = 0; for (const v of Object.values(weekObj.scores||{})) { if (typeof v === 'number' && v > top) top = v; }
-      return top || 0;
-    }
-
-    function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
-
-    function computeAggregates(players, weeks, perfectMap) {
-      const ids = players.map(p=>p.id);
-      const totals = {}; const gamesPlayed = {}; const byWeek = {}; const perfectWeeks = {}; const bestWeek = {}; const streak = {};
-      ids.forEach(id=>{ totals[id]=0; gamesPlayed[id]=0; byWeek[id]=[]; perfectWeeks[id]=0; bestWeek[id]={week:null, pts: -Infinity}; streak[id]=0; });
-
-      // streak helpers
-      const currentStreak = Object.fromEntries(ids.map(id=>[id,0]));
-      let longestStreak = Object.fromEntries(ids.map(id=>[id,0]));
-
-      const sortedWeeks = [...weeks].sort((a,b)=>a.week-b.week);
-      for (const w of sortedWeeks) {
-        const games = computeWeekGames(w, perfectMap);
-        const perfect = games || Number(perfectMap?.[String(w.week)] || 0);
-        // ensure all ids have numeric score (missing -> 0)
-        ids.forEach(id => { if (typeof w.scores[id] !== 'number') w.scores[id] = 0; });
-
-        for (const id of ids) {
-          const pts = Number(w.scores[id] || 0);
-          totals[id] += pts;
-          gamesPlayed[id] += games;
-          byWeek[id].push({ week: w.week, pts, games });
-          if (pts >= (perfect||0) && (perfect||0)>0) perfectWeeks[id] += 1;
-          if (pts > bestWeek[id].pts) bestWeek[id] = { week: w.week, pts };
-          // streak: consecutive weeks with pts >= 1
-          if (pts >= 1) {
-            currentStreak[id] += 1; longestStreak[id] = Math.max(longestStreak[id], currentStreak[id]);
-          } else {
-            currentStreak[id] = 0;
-          }
-        }
-      }
-      return { totals, gamesPlayed, byWeek, perfectWeeks, bestWeek, longestStreak };
-    }
-
-    // Medal emoji by rank
-    function medalForRank(rank) { return ''; }
-
-    // -------- Rendering: Picks table -------- //
-    function renderPicks(players, picks, eliminated) {
-      const tbody = document.getElementById('playerPicksBody');
-      tbody.innerHTML = '';
-      const eliminatedSet = new Set(eliminated||[]);
-      players.forEach(p=>{
-        const pk = picks[p.id] || {};
-        const tr = document.createElement('tr');
-        tr.className = 'border-b border-white/10';
-        tr.innerHTML = `
-          <td class="p-3 text-sm">
-            <div class="flex items-center gap-3">
-              <img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover" />
-              <div>
-                <div class="font-semibold">${p.name}</div>
-                <div class="text-xs text-white/60 flex items-center gap-2">${p.team || ''}
-                  ${p.teamLogo?`<img src="${p.teamLogo}" class="w-4 h-4" alt="${p.team} logo"/>`:''}
-                </div>
+  function renderPicks(players, picks, eliminated){
+    const tbody = document.getElementById('playerPicksBody');
+    if(!tbody) return;
+    const elim = new Set(eliminated||[]);
+    tbody.innerHTML='';
+    players.forEach(p=>{
+      const pk = picks[p.id]||{};
+      const tr = document.createElement('tr');
+      tr.className='border-b border-white/10';
+      tr.innerHTML = `
+        <td class="p-3 text-sm">
+          <div class="flex items-center gap-3">
+            <img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover" />
+            <div>
+              <div class="font-semibold">${p.name}</div>
+              <div class="text-xs text-white/60 flex items-center gap-2">${p.team||''}
+                ${p.teamLogo?`<img src="${p.teamLogo}" class="w-4 h-4" alt="${p.team} logo"/>`:''}
               </div>
             </div>
-          </td>
-          <td class="p-3 text-sm text-center ${eliminatedSet.has(pk.afcTeam)?'line-through neon-elim font-semibold':''}">${pk.afcTeam||'—'}</td>
-          <td class="p-3 text-sm text-center ${eliminatedSet.has(pk.nfcTeam)?'line-through neon-elim font-semibold':''}">${pk.nfcTeam||'—'}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
+          </div>
+        </td>
+        <td class="p-3 text-sm text-center ${elim.has(pk.afcTeam)?'line-through neon-elim font-semibold':''}">${pk.afcTeam||'—'}</td>
+        <td class="p-3 text-sm text-center ${elim.has(pk.nfcTeam)?'line-through neon-elim font-semibold':''}">${pk.nfcTeam||'—'}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
 
-    // -------- Rendering: Leaderboard -------- //
-            // -------- Profile Modal -------- //
-            // -------- Rules Modal -------- //
-    function openRules(){
-      const modal = document.getElementById('rulesModal');
-      modal.classList.remove('modal-hidden');
-      modal.classList.add('modal-shown');
-      document.body.classList.add('no-scroll');
-    }
-    function closeRules(){
-      const modal = document.getElementById('rulesModal');
-      modal.classList.add('modal-hidden');
-      modal.classList.remove('modal-shown');
-      document.body.classList.remove('no-scroll');
-    }
+  function openRules(){ const m=document.getElementById('rulesModal'); if(!m) return; m.classList.remove('modal-hidden'); m.classList.add('modal-shown'); document.body.classList.add('no-scroll'); }
+  function closeRules(){ const m=document.getElementById('rulesModal'); if(!m) return; m.classList.add('modal-hidden'); m.classList.remove('modal-shown'); document.body.classList.remove('no-scroll'); }
 
-    // -------- App state & init -------- //
-    let state = { view: 'total', weekIndex: 0 };
-
-    async function init() {
-      const [players, weeks, config, picks, eliminated] = await Promise.all([
+  async function init(){
+    try{
+      const [players, config, picks, eliminated] = await Promise.all([
         fetchJson('players.json', fallbackPlayers),
-        fetchJson('weeks.json', fallbackWeeks),
         fetchJson('config.json', fallbackConfig),
         fetchJson('picks.json', fallbackPicks),
         fetchJson('eliminatedTeams.json', fallbackEliminated)
       ]);
 
-      // expose for debugging
-      window.__players = players; window.__weeks = weeks; window.__config = config; window.__picks = picks;
-
       // Repo link
-      const repoLink = document.getElementById('repoLink');
-      if (config.repoUrl) { repoLink.href = config.repoUrl; repoLink.classList.remove('hidden'); }
+      const repoLink=document.getElementById('repoLink');
+      if (repoLink && config.repoUrl) { repoLink.href = config.repoUrl; repoLink.classList.remove('hidden'); }
 
       // Season Highlight
-      const pIndex = indexBy(players);
-      function setHighlight(role, id) {
-        const elA = document.getElementById(role==='winner'?'seasonWinnerAvatar':'seasonSpoonAvatar');
-        const elN = document.getElementById(role==='winner'?'seasonWinnerName':'seasonSpoonName');
-        const elT = document.getElementById(role==='winner'?'seasonWinnerTeam':'seasonSpoonTeam');
-        const p = pIndex.get(id);
-        if (p) {
-          elA.src = p.avatar; elN.textContent = p.name; elT.textContent = p.team || '';
-        }
+      const pIndex=indexBy(players);
+      function setHighlight(role,id){
+        if(!id) return;
+        const elA=document.getElementById(role==='winner'?'seasonWinnerAvatar':'seasonSpoonAvatar');
+        const elN=document.getElementById(role==='winner'?'seasonWinnerName':'seasonSpoonName');
+        const elT=document.getElementById(role==='winner'?'seasonWinnerTeam':'seasonSpoonTeam');
+        const p=pIndex.get(id); if(p){ if(elA) elA.src=p.avatar; if(elN) elN.textContent=p.name; if(elT) elT.textContent=p.team||''; }
       }
-      if (config.highlight?.winner) setHighlight('winner', config.highlight.winner);
-      if (config.highlight?.spoon) setHighlight('spoon', config.highlight.spoon);
+      setHighlight('winner', config?.highlight?.winner);
+      setHighlight('spoon',  config?.highlight?.spoon);
 
       // Hall of Fame
-      const hof = document.getElementById('hallOfFame');
-      hof.innerHTML = '';
-      (config.honorary||[]).forEach(entry=>{
-        const p = pIndex.get(entry.player) || { name: entry.player, avatar: 'Assets/winnertbc.png' };
-        const card = document.createElement('div');
-        card.className = 'flex items-center gap-3 p-3 rounded-xl bg-white/5 ring-1 ring-white/10';
-        card.innerHTML = `
-          <img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover"/>
-          <div>
-            <div class="font-semibold">${p.name}</div>
-            <div class="text-xs text-white/60">Champion ${entry.year}</div>
-          </div>
-        `;
+      const hof=document.getElementById('hallOfFame');
+      if(hof){ hof.innerHTML=''; (config.honorary||[]).forEach(entry=>{
+        const p=pIndex.get(entry.player)||{ name: entry.player, avatar:'Assets/winnertbc.png' };
+        const card=document.createElement('div');
+        card.className='flex items-center gap-3 p-3 rounded-xl bg-white/5 ring-1 ring-white/10';
+        card.innerHTML=`<img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover"/>
+                        <div><div class=\"font-semibold\">${p.name}</div>
+                        <div class=\"text-xs text-white/60\">Champion ${entry.year}</div></div>`;
         hof.appendChild(card);
-      });
+      }); }
 
-      // Picks table (old page feature)
+      // Player Picks
       renderPicks(players, picks, eliminated);
-      // Control wiring removed (no Total/Week toggle or week nav).
-      // Rules modal
-      document.getElementById('openRules').addEventListener('click', openRules);
-      document.getElementById('closeRules').addEventListener('click', closeRules);
-      document.getElementById('rulesModal').addEventListener('click', (e)=>{ if (e.target === e.currentTarget) closeRules(); });        el.classList.toggle('hidden');
-      });
 
-      // ESC closes modals
-      document.addEventListener('keydown', (e)=>{
-        if (e.key === 'Escape') { closeProfile(); closeRules(); }
-      });
-    }
-
-    // Kickoff
-    document.addEventListener('DOMContentLoaded', init);
-  </script>
+      // Rules
+      const open=document.getElementById('openRules'); if(open) open.addEventListener('click', openRules);
+      const close=document.getElementById('closeRules'); if(close) close.addEventListener('click', closeRules);
+      const modal=document.getElementById('rulesModal'); if(modal) modal.addEventListener('click', e=>{ if(e.target===e.currentTarget) closeRules(); });
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeRules(); });
+    } catch(err){ console.error('Init error', err); }
+  }
+  document.addEventListener('DOMContentLoaded', init);
+</script>
 </body>
 </html>
