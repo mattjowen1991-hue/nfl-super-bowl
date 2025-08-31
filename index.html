@@ -13,107 +13,106 @@
   <link rel="preload" as="image" href="Assets/football-field.jpeg" />
 
   <style>
-    /* ---------------- Fonts & base ---------------- */
-    @font-face {
-      font-family: 'Freshman';
-      src: url('Assets/Freshman.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-      font-display: swap;
-    }
-    html, body { height: 100%; background:#000; }
+  /* ---------------- Fonts & base ---------------- */
+  @font-face {
+    font-family: 'Freshman';
+    src: url('Assets/Freshman.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+  }
+  html, body { height: 100%; background:#000; }
 
-    /* Background covers page (no bottom gap) */
-    body{
-      min-height:100vh;
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
-        url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
-    }
+  /* Background: image on body (fixed), gradient on .bg-layer */
+  body{
+    min-height:100vh;
+    background:
+      url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
+  }
+  /* Add this element near the top of <body>:
+     <div class="bg-layer" aria-hidden="true"></div> */
+  .bg-layer{
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86));
+    backface-visibility: hidden;   /* avoid Safari seams */
+    transform: translateZ(0);      /* force GPU layer */
+  }
 
-    .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+  /* Smooth card hover */
+  .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
 
-    /* ---------------- Glow ONLY on pick text ---------------- */
-    .neon-elim{
-      color:#ff3b3b;
-      text-shadow:0 0 6px rgba(255,0,0,.9),0 0 14px rgba(255,0,0,.6),0 0 24px rgba(255,0,0,.4);
-      animation: neonPulse 1.2s ease-in-out infinite;
-    }
-    @keyframes neonPulse{
-      0%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}
-      50%{ text-shadow:0 0 10px rgba(255,0,0,1),0 0 22px rgba(255,0,0,.8),0 0 36px rgba(255,0,0,.6);}
-      100%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}
-    }
-    .neon-alive{
-      color:#5bff8a;
-      text-shadow:0 0 6px rgba(0,255,120,.9),0 0 14px rgba(0,255,120,.6),0 0 24px rgba(0,255,120,.4);
-      animation: neonPulseG 1.2s ease-in-out infinite;
-    }
-    @keyframes neonPulseG{
-      0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
-      50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}
-      100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
-    }
-    @media (prefers-reduced-motion: reduce){
-      .neon-elim, .neon-alive, .ice-glow, .spoon-wobble { animation: none; }
-    }
+  /* ---------------- Glow ONLY on pick text ---------------- */
+  .neon-elim{
+    color:#ff3b3b;
+    text-shadow:0 0 6px rgba(255,0,0,.9),0 0 14px rgba(255,0,0,.6),0 0 24px rgba(255,0,0,.4);
+    animation: neonPulse 1.2s ease-in-out infinite;
+  }
+  @keyframes neonPulse{
+    0%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}
+    50%{ text-shadow:0 0 10px rgba(255,0,0,1),0 0 22px rgba(255,0,0,.8),0 0 36px rgba(255,0,0,.6);}
+    100%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}
+  }
+  .neon-alive{
+    color:#5bff8a;
+    text-shadow:0 0 6px rgba(0,255,120,.9),0 0 14px rgba(0,255,120,.6),0 0 24px rgba(0,255,120,.4);
+    animation: neonPulseG 1.2s ease-in-out infinite;
+  }
+  @keyframes neonPulseG{
+    0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
+    50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}
+    100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .neon-elim, .neon-alive, .ice-glow, .spoon-wobble { animation: none; }
+  }
 
-    /* ---------------- Panels (yellow outline/dividers) ---------------- */
-    .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
-    .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
+  /* ---------------- Panels (yellow outline/dividers) ---------------- */
+  .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
+  .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
-    /* Ice-blue glow (for HOF winner avatar) */
-    .ice-glow{
-      animation: icePulse 1.6s ease-in-out infinite;
-      filter: drop-shadow(0 0 7px rgba(125,211,252,.95)) drop-shadow(0 0 18px rgba(56,189,248,.65));
-    }
-    @keyframes icePulse{ 0%{ transform:scale(1);} 50%{ transform:scale(1.05);} 100%{ transform:scale(1);} }
+  /* Ice-blue glow (for HOF winner avatar) */
+  .ice-glow{
+    animation: icePulse 1.6s ease-in-out infinite;
+    filter: drop-shadow(0 0 7px rgba(125,211,252,.95)) drop-shadow(0 0 18px rgba(56,189,248,.65));
+  }
+  @keyframes icePulse{ 0%{ transform:scale(1);} 50%{ transform:scale(1.05);} 100%{ transform:scale(1);} }
 
-    /* Spoon: quirky wobble */
-    .spoon-wobble{
-      animation:wob 1.8s ease-in-out infinite;
-      filter: drop-shadow(0 0 4px rgba(255,99,132,.8)) drop-shadow(0 0 12px rgba(255,99,132,.5));
-    }
-    @keyframes wob{ 0%,100%{ transform:rotate(0deg);} 25%{ transform:rotate(2deg);} 75%{ transform:rotate(-2deg);} }
+  /* Spoon: quirky wobble */
+  .spoon-wobble{
+    animation:wob 1.8s ease-in-out infinite;
+    filter: drop-shadow(0 0 4px rgba(255,99,132,.8)) drop-shadow(0 0 12px rgba(255,99,132,.5));
+  }
+  @keyframes wob{ 0%,100%{ transform:rotate(0deg);} 25%{ transform:rotate(2deg);} 75%{ transform:rotate(-2deg);} }
 
-    /* ---------------- Clean table styling (no table glow) ---------------- */
-    .picks-clean{
-      background: rgba(0,0,0,.72);
-      border: 1px solid rgba(255,204,0,.6);
-      border-radius: 16px;
-    }
-    .table-grid{
-      width:100%;
-      background: transparent;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-    .table-grid thead tr{ background: rgba(255,204,0,.08); }
-    .table-grid th, .table-grid td{
-      font-family:'Freshman', ui-sans-serif, system-ui;
-      letter-spacing:.02em;
-      padding:12px 16px;
-      border-right:1px solid rgba(255,204,0,.55);
-      border-bottom:1px solid rgba(255,204,0,.55);
-    }
-    .table-grid th{ color:#facc15; font-weight:800; }
-    .table-grid tr:last-child td{ border-bottom:0; }
-    .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
-
-    /* Full-viewport background layer (prevents bottom gap on some browsers) */
-.bg-layer{
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
-    url('Assets/football-field.jpeg') center center / cover no-repeat;
-  backface-visibility: hidden;      /* avoid Safari paint seams */
-  transform: translateZ(0);         /* force GPU layer */
-}
-  </style>
+  /* ---------------- Clean table styling (no table glow) ---------------- */
+  .picks-clean{
+    background: rgba(0,0,0,.72);
+    border: 1px solid rgba(255,204,0,.6);
+    border-radius: 16px;
+  }
+  .table-grid{
+    width:100%;
+    background: transparent;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  .table-grid thead tr{ background: rgba(255,204,0,.08); }
+  .table-grid th, .table-grid td{
+    font-family:'Freshman', ui-sans-serif, system-ui;
+    letter-spacing:.02em;
+    padding:12px 16px;
+    border-right:1px solid rgba(255,204,0,.55);
+    border-bottom:1px solid rgba(255,204,0,.55);
+  }
+  .table-grid th{ color:#facc15; font-weight:800; }
+  .table-grid tr:last-child td{ border-bottom:0; }
+  .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
+</style>
 </head>
 
 <body class="min-h-screen text-white relative">
