@@ -21,21 +21,22 @@
     font-style: normal;
     font-display: swap;
   }
-  html, body { height: 100%; background:#000; }
 
-  /* Body just sets height; background is rendered by .site-bg below */
+  /* Root should be transparent so our background layer shows */
+  html, body { height: 100%; background: transparent; }
+
+  /* Body provides height only (no background color) */
   body{
-    /* dynamic viewport-friendly min-height to avoid iOS/Safari quirks */
-    min-height: 100dvh;        /* modern */
-    min-height: 100svh;        /* fallback */
-    min-height: 100vh;         /* final fallback */
+    min-height: 100dvh;  /* modern */
+    min-height: 100svh;  /* fallback */
+    min-height: 100vh;   /* fallback */
   }
 
   /* Full-viewport background (image + gradient) – fixed & overscanned */
   .site-bg{
     position: fixed;
-    inset: -1px;               /* overscan 1px to hide paint seams at bottom */
-    z-index: -1;
+    inset: -1px; /* overscan to hide any paint seams */
+    z-index: 0;  /* sits behind content */
     pointer-events: none;
     background-image:
       linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
@@ -46,6 +47,9 @@
     will-change: transform;
     transform: translateZ(0);
   }
+
+  /* Ensure page content is above the background layer */
+  header, main { position: relative; z-index: 1; }
 
   /* Smooth card hover */
   .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
@@ -122,29 +126,30 @@
 
 <body class="min-h-screen text-white relative">
   <div class="site-bg" aria-hidden="true"></div>
+
   <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-3 items-center">
-  <!-- left spacer -->
-  <div></div>
+    <!-- left spacer -->
+    <div></div>
 
-  <!-- centered title -->
-  <div class="text-center">
-    <h1 class="text-3xl sm:text-4xl font-black tracking-tight"
-        style="font-family: Freshman, ui-sans-serif, system-ui">
-      Super Bowl LIX — League Table
-    </h1>
-    <p class="text-white/70 text-sm sm:text-base">
-      Single-page app • Tailwind • Freshman.ttf • Responsive
-    </p>
-  </div>
+    <!-- centered title -->
+    <div class="text-center">
+      <h1 class="text-3xl sm:text-4xl font-black tracking-tight"
+          style="font-family: Freshman, ui-sans-serif, system-ui">
+        Super Bowl LIX — League Table
+      </h1>
+      <p class="text-white/70 text-sm sm:text-base">
+        Single-page app • Tailwind • Freshman.ttf • Responsive
+      </p>
+    </div>
 
-  <!-- right controls -->
-  <div class="justify-self-end">
-    <a id="repoLink" href="#" target="_blank" rel="noopener"
-       class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">
-      View Repo
-    </a>
-  </div>
-</header>
+    <!-- right controls -->
+    <div class="justify-self-end">
+      <a id="repoLink" href="#" target="_blank" rel="noopener"
+         class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">
+        View Repo
+      </a>
+    </div>
+  </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
     <!-- Season Highlight & Hall of Fame -->
