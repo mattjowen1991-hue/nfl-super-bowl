@@ -54,6 +54,28 @@
     .neon-alive{ color:#5bff8a; text-shadow:0 0 6px rgba(0,255,120,.9),0 0 14px rgba(0,255,120,.6),0 0 24px rgba(0,255,120,.4); animation: neonPulseG 1.2s ease-in-out infinite; }
     @keyframes neonPulseG{0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);} }
     @media (prefers-reduced-motion: reduce){ .neon-alive{ animation: none; } }
+      /* Neon yellow table styling */
+    .table-neon{
+      background: linear-gradient(to bottom, rgba(255, 204, 0, 0.06), rgba(255, 204, 0, 0.03)), rgba(0,0,0,.72);
+      border-radius: 16px;
+      border: 1px solid rgba(255, 204, 0, .35);
+      box-shadow: 0 0 12px rgba(255, 204, 0, .45), 0 0 28px rgba(255, 204, 0, .25), inset 0 0 24px rgba(255, 204, 0, .08);
+      overflow: hidden;
+    }
+    .table-neon th, .table-neon td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; }
+    .table-neon thead th{
+      background-color: rgba(255, 204, 0, .08) !important;
+      border-bottom: 1px solid rgba(255, 204, 0, .35) !important;
+    }
+    /* Glowing divider between AFC and NFC columns */
+    .table-neon tr > *:nth-child(2){ position: relative; }
+    .table-neon tr > *:nth-child(2)::after{
+      content: '';
+      position: absolute; top:8px; bottom:8px; right:-1px; width:2px;
+      background: rgba(255, 204, 0, .95);
+      box-shadow: 0 0 6px rgba(255, 204, 0, .9), 0 0 18px rgba(255, 204, 0, .6);
+      border-radius: 2px;
+    }
   </style>
 </head>
 <body class="min-h-screen text-white relative">
@@ -116,7 +138,7 @@
     <section class="bg-black card-hover rounded-2xl p-4 sm:p-6 shadow-lg shadow-black/50 mb-6">
       <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Player Picks</h2>
       <div class="overflow-x-auto">
-        <table class="min-w-full border-separate border-spacing-0">
+        <table class=\"min-w-full border-separate border-spacing-0 table-neon\">
           <thead>
             <tr class="bg-white/5">
               <th class="text-left p-3 text-sm font-semibold border-b border-white/10">Player</th>
