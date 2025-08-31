@@ -50,6 +50,10 @@
         linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
         url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
     }
+      /* Neon green pulse for alive (not eliminated) picks */
+    .neon-alive{ color:#5bff8a; text-shadow:0 0 6px rgba(0,255,120,.9),0 0 14px rgba(0,255,120,.6),0 0 24px rgba(0,255,120,.4); animation: neonPulseG 1.2s ease-in-out infinite; }
+    @keyframes neonPulseG{0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);} }
+    @media (prefers-reduced-motion: reduce){ .neon-alive{ animation: none; } }
   </style>
 </head>
 <body class="min-h-screen text-white relative">
@@ -212,13 +216,13 @@
         <td class="p-3 text-sm">
           <div class="flex items-center justify-center gap-2">
             ${pk.afcTeam?`<img src="${teamLogo(pk.afcTeam)}" alt="${pk.afcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">`:''}
-            <span class="${afcElim?'line-through neon-elim font-semibold':''}">${pk.afcTeam||'—'}</span>
+            <span class=\"${afcElim?'line-through neon-elim font-semibold':'neon-alive font-semibold'}\">${pk.afcTeam||'—'}</span>
           </div>
         </td>
         <td class="p-3 text-sm">
           <div class="flex items-center justify-center gap-2">
             ${pk.nfcTeam?`<img src="${teamLogo(pk.nfcTeam)}" alt="${pk.nfcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">`:''}
-            <span class="${nfcElim?'line-through neon-elim font-semibold':''}">${pk.nfcTeam||'—'}</span>
+            <span class=\"${nfcElim?'line-through neon-elim font-semibold':'neon-alive font-semibold'}\">${pk.nfcTeam||'—'}</span>
           </div>
         </td>`;
       tbody.appendChild(tr);
