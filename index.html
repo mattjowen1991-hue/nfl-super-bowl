@@ -55,21 +55,30 @@
     @keyframes neonPulseG{0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);} }
     @media (prefers-reduced-motion: reduce){ .neon-alive{ animation: none; } }
       /* Neon yellow table styling */
-    .table-neon{
-      background: linear-gradient(to bottom, rgba(255, 204, 0, 0.06), rgba(255, 204, 0, 0.03)), rgba(0,0,0,.72);
+    .table-grid{
+      background: rgba(0,0,0,.68);
       border-radius: 16px;
-      border: 1px solid rgba(255, 204, 0, .35);
-      box-shadow: 0 0 12px rgba(255, 204, 0, .45), 0 0 28px rgba(255, 204, 0, .25), inset 0 0 24px rgba(255, 204, 0, .08);
+      border: 1px solid rgba(255, 204, 0, .25);
+      box-shadow: 0 0 10px rgba(255, 204, 0, .2);
       overflow: hidden;
     }
-    .table-neon th, .table-neon td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; }
-    .table-neon thead th{
+    .table-grid th, .table-grid td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; padding-top:12px; padding-bottom:12px; }
+    .table-grid thead th{
       background-color: rgba(255, 204, 0, .08) !important;
       border-bottom: 1px solid rgba(255, 204, 0, .35) !important;
     }
     /* Glowing divider between AFC and NFC columns */
-    .table-neon tr > *:nth-child(2){ position: relative; }
-    .table-neon tr > *:nth-child(2)::after{
+    .table-grid tbody tr > *:nth-child(2){ position: relative; }
+    .table-grid tbody tr > *:nth-child(2)::after{
+      content: '';
+      position: absolute; top:8px; bottom:8px; right:-1px; width:2px; pointer-events:none;
+      background: rgba(255, 204, 0, .9);
+      box-shadow: 0 0 6px rgba(255, 204, 0, .75), 0 0 18px rgba(255, 204, 0, .45);
+      border-radius: 2px;
+    }
+    .table-grid tbody tr{ border-bottom: 1px solid rgba(255, 204, 0, .12); }
+    .table-grid tbody tr:hover{ background: rgba(255, 204, 0, .04); }
+    .table-grid tr > *:nth-child(2)::after{
       content: '';
       position: absolute; top:8px; bottom:8px; right:-1px; width:2px;
       background: rgba(255, 204, 0, .95);
@@ -77,29 +86,38 @@
       border-radius: 2px;
     }
       /* Neon yellow table + container enhancements */
-    .picks-neon{
+    .picks-clean{
       background: rgba(0,0,0,.82);
       border: 1px solid rgba(255, 204, 0, .35);
       box-shadow: 0 0 12px rgba(255, 204, 0, .45), 0 0 28px rgba(255, 204, 0, .25), inset 0 0 24px rgba(255, 204, 0, .08);
     }
-    .table-neon{
+    .table-grid{
       background: linear-gradient(to bottom, rgba(255, 204, 0, 0.06), rgba(255, 204, 0, 0.03)), rgba(0,0,0,.72);
       border-radius: 16px;
       border: 1px solid rgba(255, 204, 0, .35);
       box-shadow: 0 0 12px rgba(255, 204, 0, .45), 0 0 28px rgba(255, 204, 0, .25), inset 0 0 24px rgba(255, 204, 0, .08);
       overflow: hidden;
     }
-    .table-neon thead tr{ background-color: rgba(255, 204, 0, .08) !important; }
-    .table-neon th, .table-neon td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; }
+    .table-grid thead tr{ background-color: rgba(255, 204, 0, .06) !important; }
+    .table-grid th, .table-grid td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; }
     /* Glowing divider between AFC and NFC columns */
-    .table-neon tr > *:nth-child(2){ position: relative; }
-    .table-neon tr > *:nth-child(2)::after{
+    .table-grid tr > *:nth-child(2){ position: relative; }
+    .table-grid tr > *:nth-child(2)::after{
       content: '';
       position: absolute; top:8px; bottom:8px; right:-1px; width:2px;
       background: rgba(255, 204, 0, .95);
       box-shadow: 0 0 6px rgba(255, 204, 0, .9), 0 0 18px rgba(255, 204, 0, .6);
       border-radius: 2px;
     }
+      /* Clean (non-neon) table + container styles */
+    .picks-clean{ background: rgba(0,0,0,.72); border: 1px solid rgba(255, 204, 0, .6); border-radius: 16px; }
+    .table-grid{ background: transparent; border-collapse: separate; border-spacing: 0; }
+    .table-grid th, .table-grid td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; padding:12px 16px; border-right:1px solid rgba(255,204,0,.5); border-bottom:1px solid rgba(255,204,0,.5); }
+    .table-grid thead th{ background: rgba(255,204,0,.08); color:#facc15; font-weight:800; }
+    .table-grid tr:last-child td{ border-bottom:0; }
+    .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
+    /* cancel any older neon divider rules */
+    .table-grid tbody tr > *:nth-child(2)::after{ content:none !important; }
   </style>
 </head>
 <body class="min-h-screen text-white relative">
@@ -159,10 +177,10 @@
     </section>
 
     <!-- Player Picks (from old Super Bowl page) -->
-    <section id="picksSection" class="card-hover rounded-2xl p-4 sm:p-6 mb-6 picks-neon">
+    <section id="picksSection" class="card-hover rounded-2xl p-4 sm:p-6 mb-6 picks-clean">
       <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Player Picks</h2>
       <div class="overflow-x-auto">
-        <table class=\"min-w-full border-separate border-spacing-0 table-neon\">
+        <table class=\"min-w-full border-separate border-spacing-0 table-grid\">
           <thead>
             <tr class="bg-white/5">
               <th class="text-left p-3 text-sm font-semibold border-b border-white/10">Player</th>
