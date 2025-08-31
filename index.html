@@ -23,23 +23,16 @@
   }
   html, body { height: 100%; background:#000; }
 
-  /* Background: image on body (fixed), gradient on .bg-layer */
+  /* Background (gradient + image) fixed together – no bottom gap */
   body{
     min-height:100vh;
-    background:
-      url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
-  }
-  /* Add this element near the top of <body>:
-     <div class="bg-layer" aria-hidden="true"></div> */
-  .bg-layer{
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86));
-    backface-visibility: hidden;   /* avoid Safari seams */
-    transform: translateZ(0);      /* force GPU layer */
+    background-image:
+      linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
+      url('Assets/football-field.jpeg');
+    background-position: center center, center center;
+    background-size: cover, cover;
+    background-repeat: no-repeat, no-repeat;
+    background-attachment: fixed, fixed;
   }
 
   /* Smooth card hover */
@@ -75,7 +68,7 @@
   .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
   .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
-  /* Ice-blue glow (for HOF winner avatar) */
+  /* Ice-blue glow (for Hall of Fame winner avatar) */
   .ice-glow{
     animation: icePulse 1.6s ease-in-out infinite;
     filter: drop-shadow(0 0 7px rgba(125,211,252,.95)) drop-shadow(0 0 18px rgba(56,189,248,.65));
