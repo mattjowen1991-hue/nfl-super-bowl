@@ -13,7 +13,7 @@
   <link rel="preload" as="image" href="Assets/football-field.jpeg" />
 
   <style>
-    /* Custom NFL-style font */
+    /* ---------------- Fonts & base ---------------- */
     @font-face {
       font-family: 'Freshman';
       src: url('Assets/Freshman.ttf') format('truetype');
@@ -21,127 +21,97 @@
       font-style: normal;
       font-display: swap;
     }
-    :root {
-      --line: rgba(255,255,255,0.12);
-      --theme: #f59e0b; /* amber-500 */
-    }
-    html, body { height: 100%; }
+    html, body { height: 100%; background-color: #000; }
     body.no-scroll { overflow: hidden; }
 
-    /* Modal show/hide helpers */
-    .modal-hidden { display: none; }
-    .modal-shown { display: block; }
-
-    /* Red bold keywords for rules/metrics */
-    .rule-key { color: #ef4444; font-weight: 800; }
-
-    /* Smooth cards hover */
-    .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
-      /* Neon red pulse for eliminated picks */
-    .neon-elim{ color:#ff3b3b; text-shadow:0 0 6px rgba(255,0,0,.9),0 0 14px rgba(255,0,0,.6),0 0 24px rgba(255,0,0,.4); animation: neonPulse 1.2s ease-in-out infinite; }
-    @keyframes neonPulse{0%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}50%{ text-shadow:0 0 10px rgba(255,0,0,1),0 0 22px rgba(255,0,0,.8),0 0 36px rgba(255,0,0,.6);}100%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);} }
-    @media (prefers-reduced-motion: reduce){ .neon-elim{ animation: none; } }
-      /* Full-page background (image + dark gradient), covers scroll */
-    html, body { background-color: #000; }
-    body{ 
+    /* Page background (covers full scroll) */
+    body{
       min-height:100%;
       background:
         linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
         url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
     }
-      /* Neon green pulse for alive (not eliminated) picks */
-    .neon-alive{ color:#5bff8a; text-shadow:0 0 6px rgba(0,255,120,.9),0 0 14px rgba(0,255,120,.6),0 0 24px rgba(0,255,120,.4); animation: neonPulseG 1.2s ease-in-out infinite; }
-    @keyframes neonPulseG{0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);} }
-    @media (prefers-reduced-motion: reduce){ .neon-alive{ animation: none; } }
-      /* Neon yellow table styling */
-    .table-grid{
-      background: rgba(0,0,0,.68);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 204, 0, .25);
-      box-shadow: 0 0 10px rgba(255, 204, 0, .2);
-      overflow: hidden;
+
+    /* Helpers */
+    .modal-hidden { display: none; }
+    .modal-shown { display: block; }
+    .rule-key { color: #ef4444; font-weight: 800; }
+    .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+
+    /* ---------------- Glow ONLY on pick text ---------------- */
+    .neon-elim{
+      color:#ff3b3b;
+      text-shadow:0 0 6px rgba(255,0,0,.9),0 0 14px rgba(255,0,0,.6),0 0 24px rgba(255,0,0,.4);
+      animation: neonPulse 1.2s ease-in-out infinite;
     }
-    .table-grid th, .table-grid td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; padding-top:12px; padding-bottom:12px; }
-    .table-grid thead th{
-      background-color: rgba(255, 204, 0, .08) !important;
-      border-bottom: 1px solid rgba(255, 204, 0, .35) !important;
+    @keyframes neonPulse{
+      0%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}
+      50%{ text-shadow:0 0 10px rgba(255,0,0,1),0 0 22px rgba(255,0,0,.8),0 0 36px rgba(255,0,0,.6);}
+      100%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}
     }
-    /* Glowing divider between AFC and NFC columns */
-    .table-grid tbody tr > *:nth-child(2){ position: relative; }
-    .table-grid tbody tr > *:nth-child(2)::after{
-      content: '';
-      position: absolute; top:8px; bottom:8px; right:-1px; width:2px; pointer-events:none;
-      background: rgba(255, 204, 0, .9);
-      box-shadow: 0 0 6px rgba(255, 204, 0, .75), 0 0 18px rgba(255, 204, 0, .45);
-      border-radius: 2px;
+    .neon-alive{
+      color:#5bff8a;
+      text-shadow:0 0 6px rgba(0,255,120,.9),0 0 14px rgba(0,255,120,.6),0 0 24px rgba(0,255,120,.4);
+      animation: neonPulseG 1.2s ease-in-out infinite;
     }
-    .table-grid tbody tr{ border-bottom: 1px solid rgba(255, 204, 0, .12); }
-    .table-grid tbody tr:hover{ background: rgba(255, 204, 0, .04); }
-    .table-grid tr > *:nth-child(2)::after{
-      content: '';
-      position: absolute; top:8px; bottom:8px; right:-1px; width:2px;
-      background: rgba(255, 204, 0, .95);
-      box-shadow: 0 0 6px rgba(255, 204, 0, .9), 0 0 18px rgba(255, 204, 0, .6);
-      border-radius: 2px;
+    @keyframes neonPulseG{
+      0%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
+      50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}
+      100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
     }
-      /* Neon yellow table + container enhancements */
-    .picks-clean{
-      background: rgba(0,0,0,.82);
-      border: 1px solid rgba(255, 204, 0, .35);
-      box-shadow: 0 0 12px rgba(255, 204, 0, .45), 0 0 28px rgba(255, 204, 0, .25), inset 0 0 24px rgba(255, 204, 0, .08);
+    @media (prefers-reduced-motion: reduce){
+      .neon-elim, .neon-alive { animation: none; }
     }
-    .table-grid{
-      background: linear-gradient(to bottom, rgba(255, 204, 0, 0.06), rgba(255, 204, 0, 0.03)), rgba(0,0,0,.72);
-      border-radius: 16px;
-      border: 1px solid rgba(255, 204, 0, .35);
-      box-shadow: 0 0 12px rgba(255, 204, 0, .45), 0 0 28px rgba(255, 204, 0, .25), inset 0 0 24px rgba(255, 204, 0, .08);
-      overflow: hidden;
-    }
-    .table-grid thead tr{ background-color: rgba(255, 204, 0, .06) !important; }
-    .table-grid th, .table-grid td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; }
-    /* Glowing divider between AFC and NFC columns */
-    .table-grid tr > *:nth-child(2){ position: relative; }
-    .table-grid tr > *:nth-child(2)::after{
-      content: '';
-      position: absolute; top:8px; bottom:8px; right:-1px; width:2px;
-      background: rgba(255, 204, 0, .95);
-      box-shadow: 0 0 6px rgba(255, 204, 0, .9), 0 0 18px rgba(255, 204, 0, .6);
-      border-radius: 2px;
-    }
-      /* Clean (non-neon) table + container styles */
-    .picks-clean{ background: rgba(0,0,0,.72); border: 1px solid rgba(255, 204, 0, .6); border-radius: 16px; }
-    .table-grid{ background: transparent; border-collapse: separate; border-spacing: 0; }
-    .table-grid th, .table-grid td{ font-family: 'Freshman', ui-sans-serif, system-ui; letter-spacing:.02em; padding:12px 16px; border-right:1px solid rgba(255,204,0,.5); border-bottom:1px solid rgba(255,204,0,.5); }
-    .table-grid thead th{ background: rgba(255,204,0,.08); color:#facc15; font-weight:800; }
-    .table-grid tr:last-child td{ border-bottom:0; }
-    .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
-    /* cancel any older neon divider rules */
-    .table-grid tbody tr > *:nth-child(2)::after{ content:none !important; }
-      /* ===== FINAL OVERRIDES: clean grid table, no neon ===== */
-    .picks-clean{ background: rgba(0,0,0,.72) !important; border: 1px solid rgba(255,204,0,.6) !important; border-radius:16px !important; box-shadow:none !important; }
-    .table-grid{ width:100%; background: transparent !important; border-collapse: separate; border-spacing: 0; box-shadow:none !important; border:0 !important; }
-    .table-grid thead tr{ background: rgba(255,204,0,.08) !important; }
-    .table-grid th, .table-grid td{ font-family:'Freshman', ui-sans-serif, system-ui !important; letter-spacing:.02em; padding:12px 16px !important; border-right:1px solid rgba(255,204,0,.55) !important; border-bottom:1px solid rgba(255,204,0,.55) !important; }
-    .table-grid tr:last-child td{ border-bottom:0 !important; }
-    .table-grid th:last-child, .table-grid td:last-child{ border-right:0 !important; }
-    .table-grid tbody tr > *:nth-child(2)::after{ content:none !important; display:none !important; }
-      /* Panels with the same yellow outline/dividers as table */
+
+    /* ---------------- Panels (yellow outline/dividers) ---------------- */
     .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
     .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
-    /* Winner/Spoon effects */
+    /* Winner/Spoon fun */
     .trophy-pulse{ animation:tpulse 1.4s ease-in-out infinite; filter: drop-shadow(0 0 6px rgba(255,204,0,.9)) drop-shadow(0 0 16px rgba(255,204,0,.6)); }
     @keyframes tpulse{ 0%{ transform:scale(1);} 50%{ transform:scale(1.06);} 100%{ transform:scale(1);} }
     .spoon-wobble{ animation:wob 1.8s ease-in-out infinite; filter: drop-shadow(0 0 4px rgba(255,99,132,.8)) drop-shadow(0 0 12px rgba(255,99,132,.5)); }
     @keyframes wob{ 0%,100%{ transform:rotate(0deg);} 25%{ transform:rotate(2deg);} 75%{ transform:rotate(-2deg);} }
     @media (prefers-reduced-motion: reduce){ .trophy-pulse,.spoon-wobble{ animation:none; } }
+
+    /* ---------------- Clean table styling (no table glow) ---------------- */
+    .picks-clean{
+      background: rgba(0,0,0,.72);
+      border: 1px solid rgba(255,204,0,.6);
+      border-radius: 16px;
+    }
+    .table-grid{
+      width:100%;
+      background: transparent;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    .table-grid thead tr{ background: rgba(255,204,0,.08); }
+    .table-grid th, .table-grid td{
+      font-family:'Freshman', ui-sans-serif, system-ui;
+      letter-spacing:.02em;
+      padding:12px 16px;
+      border-right:1px solid rgba(255,204,0,.55);
+      border-bottom:1px solid rgba(255,204,0,.55);
+    }
+    .table-grid th{ color:#facc15; font-weight:800; }
+    .table-grid tr:last-child td{ border-bottom:0; }
+    .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
   </style>
 </head>
+
 <body class="min-h-screen text-white relative">
-  <!-- Background image handled via body CSS -->
+  <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl sm:text-4xl font-black tracking-tight" style="font-family: Freshman, ui-sans-serif, system-ui">
+        Super Bowl LIX — League Table
+      </h1>
+      <p class="text-white/70 text-sm sm:text-base">Single-page app • Tailwind • Freshman.ttf • Responsive</p>
+    </div>
     <div class="flex items-center gap-2">
-      <a id="repoLink" href="#" target="_blank" rel="noopener" class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">
+      <a id="repoLink" href="#" target="_blank" rel="noopener"
+         class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">
         View Repo
       </a>
       <button id="openRules" class="text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">Rules</button>
@@ -158,7 +128,8 @@
           <div class="pr-3">
             <p class="text-amber-400 font-semibold mb-2">Winner</p>
             <div class="flex items-center gap-3">
-              <img id=\"seasonWinnerAvatar\" $1class="trophy-pulse w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
+              <img id="seasonWinnerAvatar" src="Assets/winnertbc.png" alt="Winner avatar"
+                   class="trophy-pulse w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
               <div>
                 <div id="seasonWinnerName" class="text-lg font-bold">TBC</div>
                 <div id="seasonWinnerTeam" class="text-xs text-white/60">—</div>
@@ -168,7 +139,8 @@
           <div class="pl-3">
             <p class="text-rose-400 font-semibold mb-2">Spoon</p>
             <div class="flex items-center gap-3">
-              <img id=\"seasonSpoonAvatar\" $1class="spoon-wobble w-14 h-14 rounded-full ring-2 ring-rose-400 object-cover" />
+              <img id="seasonSpoonAvatar" src="Assets/losertbc.png" alt="Spoon avatar"
+                   class="spoon-wobble w-14 h-14 rounded-full ring-2 ring-rose-400 object-cover" />
               <div>
                 <div id="seasonSpoonName" class="text-lg font-bold">TBC</div>
                 <div id="seasonSpoonTeam" class="text-xs text-white/60">—</div>
@@ -177,6 +149,7 @@
           </div>
         </div>
       </div>
+
       <!-- Hall of Fame -->
       <div class="panel-yellow card-hover p-4 sm:p-6">
         <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Hall of Fame</h2>
@@ -184,21 +157,21 @@
       </div>
     </section>
 
-    <!-- Player Picks (from old Super Bowl page) -->
+    <!-- Player Picks -->
     <section id="picksSection" class="card-hover rounded-2xl p-4 sm:p-6 mb-6 picks-clean">
       <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Player Picks</h2>
       <div class="overflow-x-auto">
         <table class="min-w-full border-separate border-spacing-0 table-grid">
           <thead>
-            <tr class="bg-white/5">
-              <th class="text-left p-3 text-sm font-semibold border-b border-white/10">Player</th>
-              <th class="text-center p-3 text-sm font-semibold border-b border-white/10">
+            <tr>
+              <th class="text-left">Player</th>
+              <th class="text-center">
                 <div class="flex items-center gap-2 justify-center">
                   <img src="Assets/afc.png" class="w-5 h-5" alt="AFC" />
                   AFC Team
                 </div>
               </th>
-              <th class="text-center p-3 text-sm font-semibold border-b border-white/10">
+              <th class="text-center">
                 <div class="flex items-center gap-2 justify-center">
                   <img src="Assets/nfc.png" class="w-5 h-5" alt="NFC" />
                   NFC Team
@@ -209,7 +182,9 @@
           <tbody id="playerPicksBody"></tbody>
         </table>
       </div>
-    </section>  </main>
+    </section>
+  </main>
+
   <!-- Rules Modal -->
   <div id="rulesModal" class="modal-hidden fixed inset-0 z-50">
     <div class="absolute inset-0 bg-black/70"></div>
@@ -218,144 +193,152 @@
       <h3 class="text-2xl font-bold mb-3" style="font-family: Freshman">Rules</h3>
       <div class="space-y-2 text-white/90 text-sm leading-relaxed">
         <p>• Submit picks before <span class="rule-key">6PM UK</span> on game day.</p>
-        <p>• Scoring: <span class="rule-key">1pt</span> per correct guess.</p>
-        <p>• <span class="rule-key">Perfect weeks</span> earn bragging rights (and glow on your profile).</p>
-        <p>• <span class="rule-key">Double points</span> may be in effect where noted.</p>
-        <p>• No <span class="rule-key">tiebreakers</span> — standings sort by totals.</p>
+        <p>• This board is **elimination only** — last pick standing wins.</p>
+        <p>• No tiebreakers.</p>
       </div>
     </div>
   </div>
 
   <script>
-  // --- Minimal, safe script (no leaderboard/cards) ---
-  const fallbackPlayers = [
-    { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png', team: '49ers', teamLogo: 'Assets/49ers.png' },
-    { id: 'gaz', name: 'Gaz', avatar: 'Assets/gaz.png', team: 'Bills', teamLogo: 'Assets/Bills.png' },
-    { id: 'colesy', name: 'Colesy', avatar: 'Assets/coley.png', team: 'Vikings', teamLogo: 'Assets/Vikings.png' },
-    { id: 'jarv', name: 'Jarv', avatar: 'Assets/jarv.png', team: 'Rams', teamLogo: 'Assets/Rams.png' },
-    { id: 'joe', name: 'Joe', avatar: 'Assets/joe.png', team: 'Lions', teamLogo: 'Assets/Lions.png' },
-    { id: 'ben', name: 'Ben', avatar: 'Assets/ben.png', team: 'Eagles', teamLogo: 'Assets/Eagles.png' },
-    { id: 'mark', name: 'Mark', avatar: 'Assets/mark.png', team: 'Texans', teamLogo: 'Assets/Texans.png' }
-  ];
-  const fallbackConfig = {
-    season: '2025',
-    repoUrl: 'https://github.com/your/repo',
-    highlight: { winner: null, spoon: null },
-    honorary: [ { year: 2024, player: 'matt' } ]
-  };
-  const fallbackPicks = {
-    matt:{afcTeam:'Kansas City Chiefs', nfcTeam:'Detroit Lions'},
-    gaz:{afcTeam:'Buffalo Bills', nfcTeam:'Green Bay Packers'},
-    colesy:{afcTeam:'Denver Broncos', nfcTeam:'Minnesota Vikings'},
-    jarv:{afcTeam:'Baltimore Ravens', nfcTeam:'Los Angeles Rams'},
-    joe:{afcTeam:'Los Angeles Chargers', nfcTeam:'Tampa Bay Buccaneers'},
-    ben:{afcTeam:'Pittsburgh Steelers', nfcTeam:'Philadelphia Eagles'},
-    mark:{afcTeam:'Houston Texans', nfcTeam:'Washington Commanders'}
-  };
-  const fallbackEliminated = [
-    'Minnesota Vikings','Los Angeles Chargers','Pittsburgh Steelers','Denver Broncos','Green Bay Packers','Tampa Bay Buccaneers','Detroit Lions','Los Angeles Rams','Baltimore Ravens','Houston Texans'
-  ];
-
-  async function fetchJson(path, fallback){
-    try { const res = await fetch(path, {cache:'no-store'}); if(!res.ok) throw 0; return await res.json(); }
-    catch{ return structuredClone(fallback); }
-  }
-  function indexBy(arr, key='id'){ const m=new Map(); arr.forEach(o=>m.set(o[key],o)); return m; }
-
-  function renderPicks(players, picks, eliminated){
-    const tbody = document.getElementById('playerPicksBody');
-    if(!tbody) return;
-    const elim = new Set(eliminated||[]);
-    const teamLogo = (name)=>{
-      if(!name) return '';
-      const slug = String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
-      return `Assets/teams/${slug}.png`;
+    // -------- Fallback data (works before you wire JSON files) --------
+    const fallbackPlayers = [
+      { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png',  team: '49ers',  teamLogo: 'Assets/49ers.png' },
+      { id: 'gaz',  name: 'Gaz',  avatar: 'Assets/gaz.png',   team: 'Bills',  teamLogo: 'Assets/Bills.png' },
+      { id: 'colesy', name: 'Colesy', avatar: 'Assets/coley.png', team: 'Vikings', teamLogo: 'Assets/Vikings.png' },
+      { id: 'jarv', name: 'Jarv', avatar: 'Assets/jarv.png',  team: 'Rams',   teamLogo: 'Assets/Rams.png' },
+      { id: 'joe',  name: 'Joe',  avatar: 'Assets/joe.png',   team: 'Lions',  teamLogo: 'Assets/Lions.png' },
+      { id: 'ben',  name: 'Ben',  avatar: 'Assets/ben.png',   team: 'Eagles', teamLogo: 'Assets/Eagles.png' },
+      { id: 'mark', name: 'Mark', avatar: 'Assets/mark.png',  team: 'Texans', teamLogo: 'Assets/Texans.png' }
+    ];
+    const fallbackConfig = {
+      season: '2025',
+      repoUrl: 'https://github.com/your/repo',
+      highlight: { winner: null, spoon: null },
+      honorary: [ { year: 2024, player: 'matt' } ]
     };
-    tbody.innerHTML='';
-    players.forEach(p=>{
-      const pk = picks[p.id]||{};
-      const afcElim = elim.has(pk.afcTeam);
-      const nfcElim = elim.has(pk.nfcTeam);
-      const tr = document.createElement('tr');
-      tr.className='border-b border-white/10';
-      tr.innerHTML = `
-        <td class="p-3 text-sm">
-          <div class="flex items-center gap-3">
-            <img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover" />
-            <div class="font-semibold">${p.name}</div>
-          </div>
-        </td>
-        <td class="p-3 text-sm">
-          <div class="flex items-center justify-center gap-2">
-            ${pk.afcTeam?`<img src="${teamLogo(pk.afcTeam)}" alt="${pk.afcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">`:''}
-            <span class=\"${afcElim?'line-through neon-elim font-semibold':'neon-alive font-semibold'}\">${pk.afcTeam||'—'}</span>
-          </div>
-        </td>
-        <td class="p-3 text-sm">
-          <div class="flex items-center justify-center gap-2">
-            ${pk.nfcTeam?`<img src="${teamLogo(pk.nfcTeam)}" alt="${pk.nfcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">`:''}
-            <span class=\"${nfcElim?'line-through neon-elim font-semibold':'neon-alive font-semibold'}\">${pk.nfcTeam||'—'}</span>
-          </div>
-        </td>`;
-      tbody.appendChild(tr);
-    });
-  }
+    const fallbackPicks = {
+      matt:{afcTeam:'Kansas City Chiefs', nfcTeam:'Detroit Lions'},
+      gaz:{afcTeam:'Buffalo Bills', nfcTeam:'Green Bay Packers'},
+      colesy:{afcTeam:'Denver Broncos', nfcTeam:'Minnesota Vikings'},
+      jarv:{afcTeam:'Baltimore Ravens', nfcTeam:'Los Angeles Rams'},
+      joe:{afcTeam:'Los Angeles Chargers', nfcTeam:'Tampa Bay Buccaneers'},
+      ben:{afcTeam:'Pittsburgh Steelers', nfcTeam:'Philadelphia Eagles'},
+      mark:{afcTeam:'Houston Texans', nfcTeam:'Washington Commanders'}
+    };
+    const fallbackEliminated = [
+      'Minnesota Vikings','Los Angeles Chargers','Pittsburgh Steelers','Denver Broncos',
+      'Green Bay Packers','Tampa Bay Buccaneers','Detroit Lions','Los Angeles Rams',
+      'Baltimore Ravens','Houston Texans'
+    ];
 
-  function openRules(){ const m=document.getElementById('rulesModal'); if(!m) return; m.classList.remove('modal-hidden'); m.classList.add('modal-shown'); document.body.classList.add('no-scroll'); }
-  function closeRules(){ const m=document.getElementById('rulesModal'); if(!m) return; m.classList.add('modal-hidden'); m.classList.remove('modal-shown'); document.body.classList.remove('no-scroll'); }
+    // -------- Utilities --------
+    async function fetchJson(path, fallback){
+      try { const res = await fetch(path, {cache:'no-store'}); if(!res.ok) throw 0; return await res.json(); }
+      catch { return structuredClone(fallback); }
+    }
+    function indexBy(arr, key='id'){ const m=new Map(); arr.forEach(o=>m.set(o[key],o)); return m; }
+    function slugifyTeam(name){
+      return String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+    }
 
-  async function init(){
-    try{
-      const [players, config, picks, eliminated] = await Promise.all([
-        fetchJson('players.json', fallbackPlayers),
-        fetchJson('config.json', fallbackConfig),
-        fetchJson('picks.json', fallbackPicks),
-        fetchJson('eliminatedTeams.json', fallbackEliminated)
-      ]);
+    // -------- Rendering: Player Picks --------
+    function renderPicks(players, picks, eliminated){
+      const tbody = document.getElementById('playerPicksBody');
+      if(!tbody) return;
+      const elim = new Set(eliminated||[]);
+      tbody.innerHTML='';
 
-      // Repo link
-      const repoLink=document.getElementById('repoLink');
-      if (repoLink && config.repoUrl) { repoLink.href = config.repoUrl; repoLink.classList.remove('hidden'); }
+      players.forEach(p=>{
+        const pk = picks[p.id] || {};
+        const afcElim = elim.has(pk.afcTeam);
+        const nfcElim = elim.has(pk.nfcTeam);
 
-      // Season Highlight
-      const pIndex=indexBy(players);
-      function setHighlight(role,id){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="flex items-center gap-3">
+              <img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover" />
+              <div class="font-semibold">${p.name}</div>
+            </div>
+          </td>
+          <td>
+            <div class="flex items-center justify-center gap-2">
+              ${pk.afcTeam ? `<img src="Assets/teams/${slugifyTeam(pk.afcTeam)}.png"
+                    alt="${pk.afcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">` : ''}
+              <span class="${afcElim ? 'line-through neon-elim font-semibold' : 'neon-alive font-semibold'}">
+                ${pk.afcTeam || '—'}
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="flex items-center justify-center gap-2">
+              ${pk.nfcTeam ? `<img src="Assets/teams/${slugifyTeam(pk.nfcTeam)}.png"
+                    alt="${pk.nfcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">` : ''}
+              <span class="${nfcElim ? 'line-through neon-elim font-semibold' : 'neon-alive font-semibold'}">
+                ${pk.nfcTeam || '—'}
+              </span>
+            </div>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // -------- Highlight & Hall of Fame --------
+    function applyHighlights(players, config){
+      const pIndex = indexBy(players);
+      function setHighlight(role, id){
         if(!id) return;
         const elA=document.getElementById(role==='winner'?'seasonWinnerAvatar':'seasonSpoonAvatar');
         const elN=document.getElementById(role==='winner'?'seasonWinnerName':'seasonSpoonName');
         const elT=document.getElementById(role==='winner'?'seasonWinnerTeam':'seasonSpoonTeam');
-        const p=pIndex.get(id); if(p){ if(elA) elA.src=p.avatar; if(elN) elN.textContent=p.name; if(elT) elT.textContent=p.team||''; }
+        const p=pIndex.get(id);
+        if(p){ if(elA) elA.src=p.avatar; if(elN) elN.textContent=p.name; if(elT) elT.textContent=p.team||''; }
       }
       setHighlight('winner', config?.highlight?.winner);
       setHighlight('spoon',  config?.highlight?.spoon);
 
-      // Hall of Fame
       const hof=document.getElementById('hallOfFame');
       if(hof){
         hof.innerHTML='';
         (config.honorary||[]).forEach(entry=>{
-          const yr = entry.year || config.season;
-          const p = pIndex.get(entry.player) || { name: entry.player, avatar:'Assets/winnertbc.png' };
-          const card = document.createElement('div');
-          card.className = 'flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 ring-1 ring-white/10';
+          const p=pIndex.get(entry.player)||{ name: entry.player, avatar:'Assets/winnertbc.png' };
+          const card=document.createElement('div');
+          card.className='flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 ring-1 ring-white/10';
           card.innerHTML = `
             <img src="${p.avatar}" alt="${p.name}" class="w-12 h-12 rounded-full object-cover"/>
             <div class="text-xs text-white/70" style="font-family: Freshman">Super Bowl ${config.season} Champion</div>`;
           hof.appendChild(card);
         });
-      } }
+      }
+    }
 
-      // Player Picks
-      renderPicks(players, picks, eliminated);
+    // -------- Rules modal --------
+    function openRules(){ const m=document.getElementById('rulesModal'); if(!m) return; m.classList.remove('modal-hidden'); m.classList.add('modal-shown'); document.body.classList.add('no-scroll'); }
+    function closeRules(){ const m=document.getElementById('rulesModal'); if(!m) return; m.classList.add('modal-hidden'); m.classList.remove('modal-shown'); document.body.classList.remove('no-scroll'); }
 
-      // Rules
-      const open=document.getElementById('openRules'); if(open) open.addEventListener('click', openRules);
-      const close=document.getElementById('closeRules'); if(close) close.addEventListener('click', closeRules);
-      const modal=document.getElementById('rulesModal'); if(modal) modal.addEventListener('click', e=>{ if(e.target===e.currentTarget) closeRules(); });
-      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeRules(); });
-    } catch(err){ console.error('Init error', err); }
-  }
-  document.addEventListener('DOMContentLoaded', init);
-</script>
+    // -------- Init --------
+    async function init(){
+      try{
+        const [players, config, picks, eliminated] = await Promise.all([
+          fetchJson('players.json', fallbackPlayers),
+          fetchJson('config.json', fallbackConfig),
+          fetchJson('picks.json', fallbackPicks),
+          fetchJson('eliminatedTeams.json', fallbackEliminated)
+        ]);
+
+        const repoLink=document.getElementById('repoLink');
+        if (repoLink && config.repoUrl) { repoLink.href = config.repoUrl; repoLink.classList.remove('hidden'); }
+
+        applyHighlights(players, config);
+        renderPicks(players, picks, eliminated);
+
+        const open=document.getElementById('openRules'); if(open) open.addEventListener('click', openRules);
+        const close=document.getElementById('closeRules'); if(close) close.addEventListener('click', closeRules);
+        const modal=document.getElementById('rulesModal'); if(modal) modal.addEventListener('click', e=>{ if(e.target===e.currentTarget) closeRules(); });
+        document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeRules(); });
+      } catch(err){ console.error('Init error', err); }
+    }
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
 </body>
 </html>
