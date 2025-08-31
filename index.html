@@ -190,25 +190,37 @@
     const tbody = document.getElementById('playerPicksBody');
     if(!tbody) return;
     const elim = new Set(eliminated||[]);
+    const teamLogo = (name)=>{
+      if(!name) return '';
+      const slug = String(name).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+      return `Assets/teams/${slug}.png`;
+    };
     tbody.innerHTML='';
     players.forEach(p=>{
       const pk = picks[p.id]||{};
+      const afcElim = elim.has(pk.afcTeam);
+      const nfcElim = elim.has(pk.nfcTeam);
       const tr = document.createElement('tr');
       tr.className='border-b border-white/10';
       tr.innerHTML = `
         <td class="p-3 text-sm">
           <div class="flex items-center gap-3">
             <img src="${p.avatar}" alt="${p.name}" class="w-10 h-10 rounded-full object-cover" />
-            <div>
-              <div class="font-semibold">${p.name}</div>
-              <div class="text-xs text-white/60 flex items-center gap-2">${p.team||''}
-                ${p.teamLogo?`<img src="${p.teamLogo}" class="w-4 h-4" alt="${p.team} logo"/>`:''}
-              </div>
-            </div>
+            <div class="font-semibold">${p.name}</div>
           </div>
         </td>
-        <td class="p-3 text-sm text-center ${elim.has(pk.afcTeam)?'line-through neon-elim font-semibold':''}">${pk.afcTeam||'—'}</td>
-        <td class="p-3 text-sm text-center ${elim.has(pk.nfcTeam)?'line-through neon-elim font-semibold':''}">${pk.nfcTeam||'—'}</td>`;
+        <td class="p-3 text-sm">
+          <div class="flex items-center justify-center gap-2">
+            ${pk.afcTeam?`<img src="${teamLogo(pk.afcTeam)}" alt="${pk.afcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">`:''}
+            <span class="${afcElim?'line-through neon-elim font-semibold':''}">${pk.afcTeam||'—'}</span>
+          </div>
+        </td>
+        <td class="p-3 text-sm">
+          <div class="flex items-center justify-center gap-2">
+            ${pk.nfcTeam?`<img src="${teamLogo(pk.nfcTeam)}" alt="${pk.nfcTeam} logo" class="w-5 h-5 object-contain" onerror="this.style.display='none'">`:''}
+            <span class="${nfcElim?'line-through neon-elim font-semibold':''}">${pk.nfcTeam||'—'}</span>
+          </div>
+        </td>`;
       tbody.appendChild(tr);
     });
   }
