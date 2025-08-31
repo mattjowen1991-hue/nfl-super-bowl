@@ -42,13 +42,19 @@
     .neon-elim{ color:#ff3b3b; text-shadow:0 0 6px rgba(255,0,0,.9),0 0 14px rgba(255,0,0,.6),0 0 24px rgba(255,0,0,.4); animation: neonPulse 1.2s ease-in-out infinite; }
     @keyframes neonPulse{0%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);}50%{ text-shadow:0 0 10px rgba(255,0,0,1),0 0 22px rgba(255,0,0,.8),0 0 36px rgba(255,0,0,.6);}100%{ text-shadow:0 0 4px rgba(255,0,0,.5),0 0 8px rgba(255,0,0,.4),0 0 16px rgba(255,0,0,.2);} }
     @media (prefers-reduced-motion: reduce){ .neon-elim{ animation: none; } }
+      /* Full-page background (image + dark gradient), covers scroll */
+    html, body { background-color: #000; }
+    body{ 
+      min-height:100%;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
+        url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
+    }
   </style>
 </head>
 <body class="min-h-screen text-white relative">
   <!-- Background image + gradient overlay -->
-  <div class="absolute inset-0 -z-10">
-    <img src="Assets/football-field.jpeg" alt="Football field" class="w-full h-full object-cover"/>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80"></div>
+  
   </div>
 
   <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 flex items-center justify-between">
@@ -112,13 +118,13 @@
               <th class="text-left p-3 text-sm font-semibold border-b border-white/10">Player</th>
               <th class="text-center p-3 text-sm font-semibold border-b border-white/10">
                 <div class="flex items-center gap-2 justify-center">
-                  <img src="Assets/afc.png" class="w-12 h-12" alt="AFC" />
+                  <img src="Assets/afc.png" class="w-5 h-5" alt="AFC" />
                   AFC Team
                 </div>
               </th>
               <th class="text-center p-3 text-sm font-semibold border-b border-white/10">
                 <div class="flex items-center gap-2 justify-center">
-                  <img src="Assets/nfc.png" class="w-8 h-8" alt="NFC" />
+                  <img src="Assets/nfc.png" class="w-5 h-5" alt="NFC" />
                   NFC Team
                 </div>
               </th>
@@ -196,7 +202,7 @@
             <div>
               <div class="font-semibold">${p.name}</div>
               <div class="text-xs text-white/60 flex items-center gap-2">${p.team||''}
-                ${p.teamLogo?`<img src="${p.teamLogo}" class="w-12 h-12" alt="${p.team} logo"/>`:''}
+                ${p.teamLogo?`<img src="${p.teamLogo}" class="w-4 h-4" alt="${p.team} logo"/>`:''}
               </div>
             </div>
           </div>
