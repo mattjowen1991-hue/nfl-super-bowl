@@ -22,22 +22,15 @@
       font-display: swap;
     }
     html, body { height: 100%; background:#000; }
-    body { position: relative; }
-    body.no-scroll { overflow: hidden; }
 
-    /* Background covers entire page (no bottom gap) */
-    body::before{
-      content:"";
-      position: fixed;
-      inset: 0;
-      z-index: -1;
+    /* Background covers page (no bottom gap) */
+    body{
+      min-height:100vh;
       background:
         linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
-        url('Assets/football-field.jpeg') center center / cover no-repeat;
-      will-change: transform;
+        url('Assets/football-field.jpeg') center center / cover fixed no-repeat;
     }
 
-    /* Helpers */
     .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
     .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.35); }
 
@@ -70,7 +63,7 @@
     .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
     .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
-    /* Winner: icy blue glow */
+    /* Ice-blue glow (for HOF winner avatar) */
     .ice-glow{
       animation: icePulse 1.6s ease-in-out infinite;
       filter: drop-shadow(0 0 7px rgba(125,211,252,.95)) drop-shadow(0 0 18px rgba(56,189,248,.65));
@@ -123,7 +116,6 @@
          class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">
         View Repo
       </a>
-      <!-- Rules removed -->
     </div>
   </header>
 
@@ -138,7 +130,7 @@
             <p class="text-amber-400 font-semibold mb-2">Winner</p>
             <div class="flex items-center gap-3">
               <img id="seasonWinnerAvatar" src="Assets/winnertbc.png" alt="Winner avatar"
-                   class="ice-glow w-14 h-14 rounded-full ring-2 ring-sky-300 object-cover" />
+                   class="w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
               <div>
                 <div id="seasonWinnerName" class="text-lg font-bold">TBC</div>
                 <div id="seasonWinnerTeam" class="text-xs text-white/60">—</div>
@@ -195,7 +187,7 @@
   </main>
 
   <script>
-    // -------- Fallback data (works before you wire JSON files) --------
+    // -------- Fallback data --------
     const fallbackPlayers = [
       { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png',  team: '49ers',  teamLogo: 'Assets/49ers.png' },
       { id: 'gaz',  name: 'Gaz',  avatar: 'Assets/gaz.png',   team: 'Bills',  teamLogo: 'Assets/Bills.png' },
@@ -298,10 +290,10 @@
         (config.honorary||[]).forEach(entry=>{
           const p=pIndex.get(entry.player)||{ name: entry.player, avatar:'Assets/winnertbc.png' };
           const card=document.createElement('div');
-          card.className='flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 ring-1 ring-white/10';
+          card.className='flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 ring-1 ring-white/10 text-center';
           card.innerHTML = `
-            <img src="${p.avatar}" alt="${p.name}" class="w-12 h-12 rounded-full object-cover"/>
-            <div class="text-xs text-white/70 text-center" style="font-family: Freshman">
+            <img src="${p.avatar}" alt="${p.name}" class="ice-glow w-12 h-12 rounded-full object-cover ring-2 ring-sky-300"/>
+            <div class="text-xs text-white/70" style="font-family: Freshman">
               Super Bowl ${config.season} Champion
             </div>`;
           hof.appendChild(card);
