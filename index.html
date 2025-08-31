@@ -23,16 +23,28 @@
   }
   html, body { height: 100%; background:#000; }
 
-  /* Background (gradient + image) fixed together – no bottom gap */
+  /* Body just sets height; background is rendered by .site-bg below */
   body{
-    min-height:100vh;
+    /* dynamic viewport-friendly min-height to avoid iOS/Safari quirks */
+    min-height: 100dvh;        /* modern */
+    min-height: 100svh;        /* fallback */
+    min-height: 100vh;         /* final fallback */
+  }
+
+  /* Full-viewport background (image + gradient) – fixed & overscanned */
+  .site-bg{
+    position: fixed;
+    inset: -1px;               /* overscan 1px to hide paint seams at bottom */
+    z-index: -1;
+    pointer-events: none;
     background-image:
       linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
       url('Assets/football-field.jpeg');
     background-position: center center, center center;
     background-size: cover, cover;
     background-repeat: no-repeat, no-repeat;
-    background-attachment: fixed, fixed;
+    will-change: transform;
+    transform: translateZ(0);
   }
 
   /* Smooth card hover */
@@ -109,7 +121,7 @@
 </head>
 
 <body class="min-h-screen text-white relative">
-  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="site-bg" aria-hidden="true"></div>
   <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-3 items-center">
   <!-- left spacer -->
   <div></div>
