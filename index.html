@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🏈 Super Bowl LIX Elimination League</title>
+  <title>🏈 Super Bowl LIX — League Table</title>
   <link rel="icon" type="image/png" sizes="48x48" href="Assets/nfl-favicon2.png" />
 
   <!-- Tailwind CSS via CDN -->
@@ -21,35 +21,31 @@
     font-style: normal;
     font-display: swap;
   }
+  html, body { height: 100%; background:#000; overscroll-behavior: none; }
 
-  /* Root should be transparent so our background layer shows */
-  html, body { height: 100%; background: transparent; }
-
-  /* Body provides height only (no background color) */
+  /* Body keeps content at least viewport height */
   body{
-    min-height: 100dvh;  /* modern */
-    min-height: 100svh;  /* fallback */
-    min-height: 100vh;   /* fallback */
+    min-height: 100dvh;   /* modern dynamic viewport */
   }
 
-  /* Full-viewport background (image + gradient) – fixed & overscanned */
+  /* Full-viewport background (image + gradient) – fixes white banner on scroll */
   .site-bg{
     position: fixed;
-    inset: -1px; /* overscan to hide any paint seams */
-    z-index: 0;  /* sits behind content */
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100dvh;
+    z-index: -1;
     pointer-events: none;
-    background-image:
+    background:
       linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
-      url('Assets/football-field.jpeg');
-    background-position: center center, center center;
-    background-size: cover, cover;
-    background-repeat: no-repeat, no-repeat;
-    will-change: transform;
+      url('Assets/football-field.jpeg') center center / cover no-repeat;
+    backface-visibility: hidden;
     transform: translateZ(0);
   }
-
-  /* Ensure page content is above the background layer */
-  header, main { position: relative; z-index: 1; }
+  @supports not (height: 100dvh){
+    .site-bg{ height: 100vh; }
+  }
 
   /* Smooth card hover */
   .card-hover { transition: transform .15s ease, box-shadow .15s ease; }
@@ -84,22 +80,7 @@
   .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
   .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
-  /* Winner: neon gold glow */
-.winner-glow{
-  animation: winPulse 1.4s ease-in-out infinite;
-  filter: drop-shadow(0 0 7px rgba(250,204,21,.95)) /* #facc15 */
-          drop-shadow(0 0 18px rgba(250,204,21,.55));
-}
-@keyframes winPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-  100% { transform: scale(1); }
-}
-@media (prefers-reduced-motion: reduce){
-  .winner-glow{ animation:none; }
-}
-
-  /* Ice-blue glow (for Hall of Fame winner avatar) */
+  /* Hall of Fame winner avatar: icy blue glow */
   .ice-glow{
     animation: icePulse 1.6s ease-in-out infinite;
     filter: drop-shadow(0 0 7px rgba(125,211,252,.95)) drop-shadow(0 0 18px rgba(56,189,248,.65));
@@ -136,34 +117,32 @@
   .table-grid th{ color:#facc15; font-weight:800; }
   .table-grid tr:last-child td{ border-bottom:0; }
   .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
-</style>
+  </style>
 </head>
 
 <body class="min-h-screen text-white relative">
+  <!-- Background layer -->
   <div class="site-bg" aria-hidden="true"></div>
 
-  <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-3 items-center">
-    <!-- left spacer -->
-    <div></div>
-
+  <!-- Header with mobile-friendly title -->
+  <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 sm:grid-cols-3 items-center gap-y-2">
     <!-- centered title -->
-    <div class="text-center">
-      <h1 class="text-3xl sm:text-4xl font-black tracking-tight"
+    <div class="sm:col-start-2 sm:col-end-3 text-center">
+      <h1 class="font-black tracking-tight leading-[1.08] sm:leading-[1.05]"
           style="font-family: Freshman, ui-sans-serif, system-ui">
-        Super Bowl LIX Elimination League
+        <span class="block text-[28px] sm:text-5xl">Super Bowl LIX</span>
+        <span class="block text-[26px] sm:text-4xl">Elimination League</span>
       </h1>
-      <p class="text-white/70 text-sm sm:text-base">
-       🏆 The road to victory starts here 🏆
+      <p class="mt-1 text-xs sm:text-sm text-white/80 flex items-center justify-center gap-1">
+        <span>🏆</span> The road to victory starts here <span>🏆</span>
       </p>
     </div>
 
-    <!-- right controls -->
-    <div class="justify-self-end">
-      <a id="repoLink" href="#" target="_blank" rel="noopener"
-         class="hidden sm:inline-flex text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20">
-        View Repo
-      </a>
-    </div>
+    <!-- repo link (center on mobile, right on desktop) -->
+    <a id="repoLink" href="#" target="_blank" rel="noopener"
+       class="justify-self-center sm:justify-self-end text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 hidden">
+      View Repo
+    </a>
   </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
@@ -171,26 +150,26 @@
     <section class="grid md:grid-cols-2 gap-4 md:gap-6 mb-6">
       <!-- Season Highlight -->
       <div class="panel-yellow card-hover p-4 sm:p-6">
-        <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">2025 Super Bowl Highlights</h2>
+        <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Season Highlight</h2>
         <div class="grid grid-cols-2 y-divider">
           <div class="pr-3">
-            <p class="text-amber-400 font-semibold mb-2">Winner 🥇</p>
+            <p class="text-amber-400 font-semibold mb-2">Winner</p>
             <div class="flex items-center gap-3">
-              <img id="seasonWinnerAvatar" src="Assets/ben.png" alt="Winner avatar"
-               class="winner-glow w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
+              <img id="seasonWinnerAvatar" src="Assets/winnertbc.png" alt="Winner avatar"
+                   class="w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
               <div>
-                <div id="seasonWinnerName" class="text-lg font-bold">Ben</div>
+                <div id="seasonWinnerName" class="text-lg font-bold">TBC</div>
                 <div id="seasonWinnerTeam" class="text-xs text-white/60">—</div>
               </div>
             </div>
           </div>
           <div class="pl-3">
-            <p class="text-rose-400 font-semibold mb-2">Wooden Spoon Holder 🥄</p>
+            <p class="text-rose-400 font-semibold mb-2">Spoon</p>
             <div class="flex items-center gap-3">
-              <img id="seasonSpoonAvatar" src="Assets/matt.png" alt="Spoon avatar"
+              <img id="seasonSpoonAvatar" src="Assets/losertbc.png" alt="Spoon avatar"
                    class="spoon-wobble w-14 h-14 rounded-full ring-2 ring-rose-400 object-cover" />
               <div>
-                <div id="seasonSpoonName" class="text-lg font-bold">Matt</div>
+                <div id="seasonSpoonName" class="text-lg font-bold">TBC</div>
                 <div id="seasonSpoonTeam" class="text-xs text-white/60">—</div>
               </div>
             </div>
@@ -215,7 +194,7 @@
               <th class="text-left">Player</th>
               <th class="text-center">
                 <div class="flex items-center gap-2 justify-center">
-                  <img src="Assets/afc.png" class="w-10 h-10" alt="AFC" />
+                  <img src="Assets/afc.png" class="w-5 h-5" alt="AFC" />
                   AFC Team
                 </div>
               </th>
@@ -234,7 +213,7 @@
   </main>
 
   <script>
-    // -------- Fallback data --------
+    // -------- Fallback data (works even without JSON files) --------
     const fallbackPlayers = [
       { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png',  team: '49ers',  teamLogo: 'Assets/49ers.png' },
       { id: 'gaz',  name: 'Gaz',  avatar: 'Assets/gaz.png',   team: 'Bills',  teamLogo: 'Assets/Bills.png' },
@@ -248,7 +227,7 @@
       season: '2025',
       repoUrl: 'https://github.com/your/repo',
       highlight: { winner: null, spoon: null },
-      honorary: [ { year: 2024, player: 'ben' } ]
+      honorary: [ { year: 2024, player: 'matt' } ]
     };
     const fallbackPicks = {
       matt:{afcTeam:'Kansas City Chiefs', nfcTeam:'Detroit Lions'},
