@@ -136,7 +136,7 @@
 
   /* Reduced motion: disable animations */
   @media (prefers-reduced-motion: reduce){
-    .neon-elim, .n eon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
+    .neon-elim, .neon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
   }
   </style>
 </head>
@@ -333,12 +333,12 @@
       if(hof){
         hof.innerHTML='';
         (config.honorary||[]).forEach(entry=>{
-          const p=pIndex.get(entry.player)||{ name: entry player, avatar:'Assets/winnertbc.png' };
+          const p=pIndex.get(entry.player)||{ name: entry.player, avatar:'Assets/winnertbc.png' }; /* <- fixed dot */
           const card=document.createElement('div');
           /* no border/background, avatar matches Season Highlight */
           card.className='flex flex-col items-center gap-2 p-3 text-center';
           card.innerHTML = `
-            <img src="${p.avatar}" alt="${p.name}" class="ice-glow w-14 h-14 rounded-full object-cover ring-2 ring-sky-300"/>
+            <img src="${p.avatar}" alt="${p.name}" class="ice-glow w-14 h-14 rounded-full object-cover"/>
             <div class="text-xs text-white/70" style="font-family: Freshman">
               Super Bowl ${config.season} Champion
             </div>`;
