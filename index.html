@@ -2,14 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🏈 Super Bowl LIX — League Table</title>
   <link rel="icon" type="image/png" sizes="48x48" href="Assets/nfl-favicon2.png" />
-
-  <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Preload background for faster paint -->
   <link rel="preload" as="image" href="Assets/football-field.jpeg" />
 
   <style>
@@ -22,20 +18,21 @@
     font-display: swap;
   }
 
-  /* Root stays black as a safety net; body is transparent so the bg layer shows */
+  /* Root stays black; body is transparent so the bg layer shows */
   html { height: 100%; background:#000; }
   body{
     height: 100%;
     min-height: 100dvh;
-    background: transparent;        /* important — do not paint over .site-bg */
+    background: transparent;
     overscroll-behavior: none;
   }
 
-  /* One fixed layer renders BOTH the image and the dark gradient.
-     inset:-1px overscans to avoid tiny seams on some GPUs. */
+  /* Fixed background that doesn't “jiggle” on mobile */
   .site-bg{
     position: fixed;
-    inset: -1px;
+    top: 0; left: 0;
+    width: 100lvw;               /* large viewport = stable when URL bar moves */
+    height: 100lvh;
     z-index: -1;
     pointer-events: none;
     background:
@@ -44,6 +41,16 @@
     background-position: center center, center center;
     background-size: cover, cover;
     background-repeat: no-repeat, no-repeat;
+    backface-visibility: hidden;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+  /* Fallbacks for browsers without l* units */
+  @supports not (height: 100lvh){
+    .site-bg{ width: 100dvw; height: 100dvh; }
+  }
+  @supports not (height: 100dvh){
+    .site-bg{ width: 100vw; height: 100vh; }
   }
 
   /* Smooth card hover */
@@ -80,7 +87,7 @@
   .winner-glow{
     animation: winPulse 1.4s ease-in-out infinite;
     filter:
-      drop-shadow(0 0 7px rgba(250,204,21,.95))  /* #facc15 */
+      drop-shadow(0 0 7px rgba(250,204,21,.95))
       drop-shadow(0 0 18px rgba(250,204,21,.55));
   }
   @keyframes winPulse{
@@ -89,7 +96,7 @@
     100% { transform: scale(1); }
   }
 
-  /* Hall of Fame winner avatar: icy blue glow */
+  /* Hall of Fame winner avatar: icy blue glow (no surrounding card border) */
   .ice-glow{
     animation: icePulse 1.6s ease-in-out infinite;
     filter: drop-shadow(0 0 7px rgba(125,211,252,.95)) drop-shadow(0 0 18px rgba(56,189,248,.65));
@@ -127,7 +134,7 @@
   .table-grid tr:last-child td{ border-bottom:0; }
   .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
 
-  /* Reduced motion: disable all animations */
+  /* Reduced motion: disable animations */
   @media (prefers-reduced-motion: reduce){
     .neon-elim, .neon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
   }
@@ -138,9 +145,8 @@
   <!-- Background layer -->
   <div class="site-bg" aria-hidden="true"></div>
 
-  <!-- Header with mobile-friendly title -->
+  <!-- Header -->
   <header class="max-w-6xl mx-auto px-4 sm:px-6 py-6 grid grid-cols-1 sm:grid-cols-3 items-center gap-y-2">
-    <!-- centered title -->
     <div class="sm:col-start-2 sm:col-end-3 text-center">
       <h1 class="font-black tracking-tight leading-[1.08] sm:leading-[1.05]"
           style="font-family: Freshman, ui-sans-serif, system-ui">
@@ -152,7 +158,6 @@
       </p>
     </div>
 
-    <!-- repo link (center on mobile, right on desktop) -->
     <a id="repoLink" href="#" target="_blank" rel="noopener"
        class="justify-self-center sm:justify-self-end text-xs sm:text-sm px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 hidden">
       View Repo
@@ -160,7 +165,6 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
-    <!-- Season Highlight & Hall of Fame -->
     <section class="grid md:grid-cols-2 gap-4 md:gap-6 mb-6">
       <!-- Season Highlight -->
       <div class="panel-yellow card-hover p-4 sm:p-6">
@@ -227,7 +231,7 @@
   </main>
 
   <script>
-    // -------- Fallback data (works even without JSON files) --------
+    // -------- Fallback data --------
     const fallbackPlayers = [
       { id: 'matt', name: 'Matt', avatar: 'Assets/matt.png',  team: '49ers',  teamLogo: 'Assets/49ers.png' },
       { id: 'gaz',  name: 'Gaz',  avatar: 'Assets/gaz.png',   team: 'Bills',  teamLogo: 'Assets/Bills.png' },
@@ -330,9 +334,10 @@
         (config.honorary||[]).forEach(entry=>{
           const p=pIndex.get(entry.player)||{ name: entry.player, avatar:'Assets/winnertbc.png' };
           const card=document.createElement('div');
-          card.className='flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 ring-1 ring-white/10 text-center';
+          /* removed translucent border/background, match avatar size to Season Highlight */
+          card.className='flex flex-col items-center gap-2 p-3 text-center';
           card.innerHTML = `
-            <img src="${p.avatar}" alt="${p.name}" class="ice-glow w-12 h-12 rounded-full object-cover ring-2 ring-sky-300"/>
+            <img src="${p.avatar}" alt="${p.name}" class="ice-glow w-14 h-14 rounded-full object-cover ring-2 ring-sky-300"/>
             <div class="text-xs text-white/70" style="font-family: Freshman">
               Super Bowl ${config.season} Champion
             </div>`;
