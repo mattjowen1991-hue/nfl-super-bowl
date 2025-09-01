@@ -22,30 +22,28 @@
     font-display: swap;
   }
 
-  html, body { height: 100%; background:#000; overscroll-behavior: none; }
-
-  /* Keep content at least viewport height, and render the IMAGE on <body> */
+  /* Root stays black as a safety net; body is transparent so the bg layer shows */
+  html { height: 100%; background:#000; }
   body{
+    height: 100%;
     min-height: 100dvh;
-    background-image: url('Assets/football-field.jpeg');
-    background-position: center center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed; /* desktop + most Android */
+    background: transparent;        /* important — do not paint over .site-bg */
+    overscroll-behavior: none;
   }
 
-  /* Fixed GRADIENT overlay (separate layer prevents black slab artifacts) */
+  /* One fixed layer renders BOTH the image and the dark gradient.
+     inset:-1px overscans to avoid tiny seams on some GPUs. */
   .site-bg{
     position: fixed;
-    inset: 0;
+    inset: -1px;
     z-index: -1;
     pointer-events: none;
-    background: linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86));
-  }
-
-  /* iOS Safari fallback: disable fixed attachment on the image, keep gradient fixed */
-  @supports (-webkit-touch-callout: none) {
-    body { background-attachment: scroll; }
+    background:
+      linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
+      url('Assets/football-field.jpeg');
+    background-position: center center, center center;
+    background-size: cover, cover;
+    background-repeat: no-repeat, no-repeat;
   }
 
   /* Smooth card hover */
