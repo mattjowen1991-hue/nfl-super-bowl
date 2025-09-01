@@ -84,6 +84,21 @@
   .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
   .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
+  /* Winner: neon gold glow */
+.winner-glow{
+  animation: winPulse 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 7px rgba(250,204,21,.95)) /* #facc15 */
+          drop-shadow(0 0 18px rgba(250,204,21,.55));
+}
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce){
+  .winner-glow{ animation:none; }
+}
+
   /* Ice-blue glow (for Hall of Fame winner avatar) */
   .ice-glow{
     animation: icePulse 1.6s ease-in-out infinite;
@@ -161,8 +176,8 @@
           <div class="pr-3">
             <p class="text-amber-400 font-semibold mb-2">Winner 🥇</p>
             <div class="flex items-center gap-3">
-              <img id="seasonWinnerAvatar" src="Assets/ben.png" alt="Winner avatar"
-                   class="w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
+              <img id="seasonWinnerAvatar" src="Assets/winnertbc.png" alt="Winner avatar"
+     class="winner-glow w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
               <div>
                 <div id="seasonWinnerName" class="text-lg font-bold">Ben (Philadelphia Eagles)</div>
                 <div id="seasonWinnerTeam" class="text-xs text-white/60">—</div>
