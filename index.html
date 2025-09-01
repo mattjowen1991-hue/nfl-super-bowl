@@ -72,12 +72,25 @@
     100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
   }
   @media (prefers-reduced-motion: reduce){
-    .neon-elim, .neon-alive, .ice-glow, .spoon-wobble { animation: none; }
-  }
+  .neon-elim, .neon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
+}
 
   /* ---------------- Panels (yellow outline/dividers) ---------------- */
   .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
   .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
+
+  /* Winner: neon gold glow */
+.winner-glow{
+  animation: winPulse 1.4s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 7px rgba(250,204,21,.95))  /* #facc15 */
+    drop-shadow(0 0 18px rgba(250,204,21,.55));
+}
+@keyframes winPulse{
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
 
   /* Hall of Fame winner avatar: icy blue glow */
   .ice-glow{
