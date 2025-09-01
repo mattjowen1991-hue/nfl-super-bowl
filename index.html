@@ -71,26 +71,23 @@
     50%{ text-shadow:0 0 10px rgba(0,255,120,1),0 0 22px rgba(0,255,120,.8),0 0 36px rgba(0,255,120,.6);}
     100%{ text-shadow:0 0 4px rgba(0,255,120,.5),0 0 8px rgba(0,255,120,.4),0 0 16px rgba(0,255,120,.2);}
   }
-  @media (prefers-reduced-motion: reduce){
-  .neon-elim, .neon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
-}
 
   /* ---------------- Panels (yellow outline/dividers) ---------------- */
   .panel-yellow{ background: rgba(0,0,0,.72); border:1px solid rgba(255,204,0,.6); border-radius:16px; }
   .y-divider > * + *{ border-left:1px solid rgba(255,204,0,.55); }
 
   /* Winner: neon gold glow */
-.winner-glow{
-  animation: winPulse 1.4s ease-in-out infinite;
-  filter:
-    drop-shadow(0 0 7px rgba(250,204,21,.95))  /* #facc15 */
-    drop-shadow(0 0 18px rgba(250,204,21,.55));
-}
-@keyframes winPulse{
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.06); }
-  100% { transform: scale(1); }
-}
+  .winner-glow{
+    animation: winPulse 1.4s ease-in-out infinite;
+    filter:
+      drop-shadow(0 0 7px rgba(250,204,21,.95))  /* #facc15 */
+      drop-shadow(0 0 18px rgba(250,204,21,.55));
+  }
+  @keyframes winPulse{
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
 
   /* Hall of Fame winner avatar: icy blue glow */
   .ice-glow{
@@ -129,7 +126,12 @@
   .table-grid th{ color:#facc15; font-weight:800; }
   .table-grid tr:last-child td{ border-bottom:0; }
   .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
-</style>
+
+  /* Reduced motion: disable all animations */
+  @media (prefers-reduced-motion: reduce){
+    .neon-elim, .neon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
+  }
+  </style>
 </head>
 
 <body class="min-h-screen text-white relative">
@@ -168,7 +170,7 @@
             <p class="text-amber-400 font-semibold mb-2">Winner</p>
             <div class="flex items-center gap-3">
               <img id="seasonWinnerAvatar" src="Assets/winnertbc.png" alt="Winner avatar"
-                   class="w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
+                   class="winner-glow w-14 h-14 rounded-full ring-2 ring-amber-400 object-cover" />
               <div>
                 <div id="seasonWinnerName" class="text-lg font-bold">TBC</div>
                 <div id="seasonWinnerTeam" class="text-xs text-white/60">—</div>
