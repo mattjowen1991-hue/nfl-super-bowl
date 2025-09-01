@@ -1,5 +1,5 @@
 [
-  { "id": "matt",   "name": "Matt",   "avatar": "Assets/matt.png",  "team": "Chiefs",   "teamLogo": "Assets/Chiefs.png" },
+  { "id": "matt",   "name": "Matt",   "avatar": "Assets/matt.png",  "team": "Chiefs",  "teamLogo": "Assets/Chiefs.png" },
   { "id": "gaz",    "name": "Gaz",    "avatar": "Assets/gaz.png",   "team": "Bills",   "teamLogo": "Assets/Bills.png" },
   { "id": "colesy", "name": "Colesy", "avatar": "Assets/coley.png", "team": "Vikings", "teamLogo": "Assets/Vikings.png" },
   { "id": "jarv",   "name": "Jarv",   "avatar": "Assets/jarv.png",  "team": "Rams",    "teamLogo": "Assets/Rams.png" },
