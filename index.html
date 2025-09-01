@@ -31,7 +31,7 @@
   .site-bg{
     position: fixed;
     top: 0; left: 0;
-    width: 100lvw;               /* large viewport = stable when URL bar moves */
+    width: 100lvw;               /* stable with mobile address bar changes */
     height: 100lvh;
     z-index: -1;
     pointer-events: none;
@@ -136,7 +136,7 @@
 
   /* Reduced motion: disable animations */
   @media (prefers-reduced-motion: reduce){
-    .neon-elim, .neon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
+    .neon-elim, .n eon-alive, .ice-glow, .spoon-wobble, .winner-glow { animation: none; }
   }
   </style>
 </head>
@@ -165,7 +165,35 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
-    <section class="grid md:grid-cols-2 gap-4 md:gap-6 mb-6">
+    <!-- Player Picks FIRST -->
+    <section id="picksSection" class="card-hover rounded-2xl p-4 sm:p-6 mb-6 picks-clean">
+      <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Player Picks</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-separate border-spacing-0 table-grid">
+          <thead>
+            <tr>
+              <th class="text-left">Player</th>
+              <th class="text-center">
+                <div class="flex items-center gap-2 justify-center">
+                  <img src="Assets/afc.png" class="w-5 h-5" alt="AFC" />
+                  AFC Team
+                </div>
+              </th>
+              <th class="text-center">
+                <div class="flex items-center gap-2 justify-center">
+                  <img src="Assets/nfc.png" class="w-5 h-5" alt="NFC" />
+                  NFC Team
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="playerPicksBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Season Highlight & Hall of Fame AFTER the table -->
+    <section class="grid md:grid-cols-2 gap-4 md:gap-6 mt-6">
       <!-- Season Highlight -->
       <div class="panel-yellow card-hover p-4 sm:p-6">
         <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Season Highlight</h2>
@@ -199,33 +227,6 @@
       <div class="panel-yellow card-hover p-4 sm:p-6">
         <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Hall of Fame</h2>
         <div id="hallOfFame" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
-      </div>
-    </section>
-
-    <!-- Player Picks -->
-    <section id="picksSection" class="card-hover rounded-2xl p-4 sm:p-6 mb-6 picks-clean">
-      <h2 class="text-xl sm:text-2xl font-bold mb-4" style="font-family: Freshman">Player Picks</h2>
-      <div class="overflow-x-auto">
-        <table class="min-w-full border-separate border-spacing-0 table-grid">
-          <thead>
-            <tr>
-              <th class="text-left">Player</th>
-              <th class="text-center">
-                <div class="flex items-center gap-2 justify-center">
-                  <img src="Assets/afc.png" class="w-5 h-5" alt="AFC" />
-                  AFC Team
-                </div>
-              </th>
-              <th class="text-center">
-                <div class="flex items-center gap-2 justify-center">
-                  <img src="Assets/nfc.png" class="w-5 h-5" alt="NFC" />
-                  NFC Team
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody id="playerPicksBody"></tbody>
-        </table>
       </div>
     </section>
   </main>
@@ -332,9 +333,9 @@
       if(hof){
         hof.innerHTML='';
         (config.honorary||[]).forEach(entry=>{
-          const p=pIndex.get(entry.player)||{ name: entry.player, avatar:'Assets/winnertbc.png' };
+          const p=pIndex.get(entry.player)||{ name: entry player, avatar:'Assets/winnertbc.png' };
           const card=document.createElement('div');
-          /* removed translucent border/background, match avatar size to Season Highlight */
+          /* no border/background, avatar matches Season Highlight */
           card.className='flex flex-col items-center gap-2 p-3 text-center';
           card.innerHTML = `
             <img src="${p.avatar}" alt="${p.name}" class="ice-glow w-14 h-14 rounded-full object-cover ring-2 ring-sky-300"/>
