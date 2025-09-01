@@ -1,10 +1,10 @@
 {
-  "matt":   { "afcTeam": "Kansas City Chiefs",   "nfcTeam": "Detroit Lions" },
-  "gaz":    { "afcTeam": "Buffalo Bills",        "nfcTeam": "Green Bay Packers" },
-  "colesy": { "afcTeam": "Denver Broncos",       "nfcTeam": "Minnesota Vikings" },
-  "jarv":   { "afcTeam": "Baltimore Ravens",     "nfcTeam": "Los Angeles Rams" },
-  "joe":    { "afcTeam": "Los Angeles Chargers", "nfcTeam": "Tampa Bay Buccaneers" },
-  "ben":    { "afcTeam": "Pittsburgh Steelers",  "nfcTeam": "Philadelphia Eagles" },
-  "mark":   { "afcTeam": "Houston Texans",       "nfcTeam": "Washington Commanders" }
+  "matt":   { "afcTeam": "TBC",   "nfcTeam": "TBC" },
+  "gaz":    { "afcTeam": "TBC",   "nfcTeam": "TBC" },
+  "colesy": { "afcTeam": "TBC",   "nfcTeam": "TBC" },
+  "jarv":   { "afcTeam": "TBC",   "nfcTeam": "TBC" },
+  "joe":    { "afcTeam": "TBC",   "nfcTeam": "TBC" },
+  "ben":    { "afcTeam": "TBC",   "nfcTeam": "TBC" },
+  "mark":   { "afcTeam": "TBC",   "nfcTeam": "TBC" }
 }
 
