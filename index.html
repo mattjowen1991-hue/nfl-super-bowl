@@ -21,30 +21,31 @@
     font-style: normal;
     font-display: swap;
   }
+
   html, body { height: 100%; background:#000; overscroll-behavior: none; }
 
-  /* Body keeps content at least viewport height */
+  /* Keep content at least viewport height, and render the IMAGE on <body> */
   body{
-    min-height: 100dvh;   /* modern dynamic viewport */
+    min-height: 100dvh;
+    background-image: url('Assets/football-field.jpeg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* desktop + most Android */
   }
 
-  /* Full-viewport background (image + gradient) – fixes white banner on scroll */
+  /* Fixed GRADIENT overlay (separate layer prevents black slab artifacts) */
   .site-bg{
     position: fixed;
-    left: 0;
-    top: 0;
-    width: 100vw;
-    height: 100dvh;
+    inset: 0;
     z-index: -1;
     pointer-events: none;
-    background:
-      linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86)),
-      url('Assets/football-field.jpeg') center center / cover no-repeat;
-    backface-visibility: hidden;
-    transform: translateZ(0);
+    background: linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.62), rgba(0,0,0,.86));
   }
-  @supports not (height: 100dvh){
-    .site-bg{ height: 100vh; }
+
+  /* iOS Safari fallback: disable fixed attachment on the image, keep gradient fixed */
+  @supports (-webkit-touch-callout: none) {
+    body { background-attachment: scroll; }
   }
 
   /* Smooth card hover */
@@ -117,7 +118,7 @@
   .table-grid th{ color:#facc15; font-weight:800; }
   .table-grid tr:last-child td{ border-bottom:0; }
   .table-grid th:last-child, .table-grid td:last-child{ border-right:0; }
-  </style>
+</style>
 </head>
 
 <body class="min-h-screen text-white relative">
