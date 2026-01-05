@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- PWA Support -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#facc15">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SB League">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🏈 Super Bowl LIX — Elimination League</title>
@@ -631,5 +638,40 @@
 
     document.addEventListener('DOMContentLoaded', init);
   </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('✅ Service Worker registered'))
+      .catch(err => console.log('Service Worker error:', err));
+  }
+</script>
+```
+
+---
+
+## 5. Create icons
+
+You'll need to create an `icons` folder with:
+- `icon-192.png` (192x192)
+- `icon-512.png` (512x512)
+
+You could use your NFL favicon or a Super Bowl themed icon.
+
+---
+
+## Summary of files needed:
+```
+superbowl-league/
+├── index.html (updated with PWA tags + SW registration)
+├── manifest.json (new)
+├── sw.js (new)
+├── players.json
+├── picks.json
+├── config.json
+├── icons/
+│   ├── icon-192.png
+│   └── icon-512.png
+└── Assets/
+    └── (your existing assets)
 </body>
 </html>
