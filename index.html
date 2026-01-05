@@ -427,7 +427,8 @@
         if (!res.ok) throw new Error('JSONBin fetch failed');
         
         const data = await res.json();
-        const draftData = data.record;
+        const record = data.record;
+const draftData = record?.picks || record;
         
         // Map draft machine format to league table format
         // Draft machine stores: { joe: { afcTeam: "...", nfcTeam: "..." }, ... }
@@ -435,7 +436,7 @@
         if (draftData && typeof draftData === 'object') {
           const picks = {};
           for (const [playerId, playerData] of Object.entries(draftData)) {
-            if (playerData && typeof playerData === 'object') {
+            if (playerData && typeof playerData === 'object' && 'afcTeam' in playerData) {
               picks[playerId] = {
                 afcTeam: playerData.afcTeam || 'TBC',
                 nfcTeam: playerData.nfcTeam || 'TBC'
