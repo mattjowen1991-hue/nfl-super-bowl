@@ -368,6 +368,10 @@
     // ============================================
     const ESPN_PLAYOFF_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=3';
     
+    // JSONBin config - auto-syncs with Draft Machine
+    const JSONBIN_BIN_ID = '695b078fd0ea881f4054b2a0';
+    const JSONBIN_API_KEY = '$2a$10$C7BY0Kl0u74gNn/kXO7xNuayWv493/f1jAxlHUmx3ENADQKDii61C';
+    
     // ============================================
     // FALLBACK DATA
     // ============================================
@@ -409,6 +413,43 @@
         return await res.json();
       } catch {
         return structuredClone(fallback);
+      }
+    }
+
+    // Fetch picks from JSONBin (synced with Draft Machine)
+    async function fetchPicksFromJsonBin() {
+      try {
+        const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}/latest`, {
+          headers: { 'X-Access-Key': JSONBIN_API_KEY },
+          cache: 'no-store'
+        });
+        
+        if (!res.ok) throw new Error('JSONBin fetch failed');
+        
+        const data = await res.json();
+        const draftData = data.record;
+        
+        // Map draft machine format to league table format
+        // Draft machine stores: { joe: { afcTeam: "...", nfcTeam: "..." }, ... }
+        // We need the same format, so just return it directly
+        if (draftData && typeof draftData === 'object') {
+          const picks = {};
+          for (const [playerId, playerData] of Object.entries(draftData)) {
+            if (playerData && typeof playerData === 'object') {
+              picks[playerId] = {
+                afcTeam: playerData.afcTeam || 'TBC',
+                nfcTeam: playerData.nfcTeam || 'TBC'
+              };
+            }
+          }
+          console.log('✅ Loaded picks from JSONBin:', picks);
+          return picks;
+        }
+        
+        throw new Error('Invalid data format');
+      } catch (err) {
+        console.warn('⚠️ JSONBin fetch failed, using fallback:', err);
+        return structuredClone(fallbackPicks);
       }
     }
 
@@ -601,10 +642,11 @@
     async function init() {
       try {
         // Fetch all data in parallel
+        // Now fetching picks from JSONBin instead of picks.json
         const [players, config, picks, espnData] = await Promise.all([
           fetchJson('players.json', fallbackPlayers),
           fetchJson('config.json', fallbackConfig),
-          fetchJson('picks.json', fallbackPicks),
+          fetchPicksFromJsonBin(),  // <-- Changed to JSONBin
           fetchEliminatedTeams()
         ]);
 
@@ -630,7 +672,7 @@
       
       const [players, picks] = await Promise.all([
         fetchJson('players.json', fallbackPlayers),
-        fetchJson('picks.json', fallbackPicks)
+        fetchPicksFromJsonBin()  // <-- Changed to JSONBin
       ]);
       
       renderPicks(players, picks, espnData.eliminated);
