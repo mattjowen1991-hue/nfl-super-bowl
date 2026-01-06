@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sb-league-v1';
+const CACHE_NAME = 'sb-league-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -33,9 +33,10 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // Always fetch fresh data from ESPN and JSON files
-  if (url.hostname.includes('espn.com') || 
-      url.pathname.endsWith('.json')) {
+  // Always fetch fresh data from ESPN, JSONBin, and JSON files
+if (url.hostname.includes('espn.com') || 
+    url.hostname.includes('jsonbin.io') ||
+    url.pathname.endsWith('.json')) {
     event.respondWith(
       fetch(event.request)
         .catch(() => caches.match(event.request))
