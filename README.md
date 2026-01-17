@@ -16,6 +16,19 @@ A live playoff tracker PWA that displays player picks and automatically marks te
 - **JSONBin** syncs picks from the Draft Machine in real-time
 - No manual updates needed once the draft is complete
 
+### 💰 Prize Pot
+- Displays the total prize pool (£5 × number of players)
+- Animated with falling money/footballs
+- **Automatically transforms** into a champion display when a winner is detected
+
+### 🏆 Auto Winner Detection
+The app automatically detects the winner in two ways:
+1. **Super Bowl Winner** - When ESPN reports the Super Bowl result, the app finds which player picked that team
+2. **Last Player Standing** - If only one player has a team still alive, they're auto-crowned
+
+### 🥄 Auto Spooner Detection
+The "spooner" (first player fully eliminated) is automatically detected based on the `ELIMINATION_ORDER` array, which tracks when teams were eliminated each round.
+
 ## 📁 File Structure
 
 ```
@@ -60,8 +73,8 @@ Define the players in your league:
 {
   "season": "2025",
   "highlight": {
-    "winner": null,      // Set to player id when season ends (e.g., "joe")
-    "spoon": null        // Set to last place player id
+    "winner": null,      // Auto-detected, or set manually to player id (e.g., "joe")
+    "spoon": null        // Auto-detected, or set manually to last place player id
   },
   "honorary": [
     { "year": 2025, "player": null },    // Current season (TBD)
@@ -69,6 +82,25 @@ Define the players in your league:
   ]
 }
 ```
+
+### Prize Pot Configuration
+In `index.html`, adjust these constants:
+```javascript
+const ENTRY_FEE = 5; // £5 per player - change if your entry fee differs
+```
+
+### Elimination Order (for Spooner Detection)
+Update this array after each playoff round to track when teams were eliminated:
+```javascript
+const ELIMINATION_ORDER = [
+  { round: 'Wild Card', teams: ['Pittsburgh Steelers', 'Jacksonville Jaguars', 'Los Angeles Chargers', 'Carolina Panthers', 'Green Bay Packers', 'Philadelphia Eagles'] },
+  { round: 'Divisional', teams: ['Team1', 'Team2', 'Team3', 'Team4'] },  // Add after Divisional
+  { round: 'Conference', teams: ['Team1', 'Team2'] },                    // Add after Conference
+  { round: 'Super Bowl', teams: ['LosingTeam'] },                        // Add after Super Bowl
+];
+```
+
+This determines who gets the 🥄 - the player whose last team was eliminated in the earliest round.
 
 ### JSONBin Integration
 The app automatically fetches picks from JSONBin (shared with Draft Machine):
@@ -78,6 +110,12 @@ const JSONBIN_API_KEY = '$2a$10$C7BY0Kl0u74gNn/kXO7xNuayWv493/f1jAxlHUmx3ENADQKD
 ```
 
 ## 🎨 Visual Features
+
+### Prize Pot Display
+| State | Appearance |
+|-------|------------|
+| **No Winner Yet** | 🏆 Trophy, "Prize Pot", £35, animated money rain |
+| **Winner Detected** | 👑 Crown, winner's avatar, name, winning team logo, "£35 Won!" |
 
 ### Team Status Animations
 | Status | Appearance |
@@ -91,8 +129,8 @@ const JSONBIN_API_KEY = '$2a$10$C7BY0Kl0u74gNn/kXO7xNuayWv493/f1jAxlHUmx3ENADQKD
 - **Eliminated:** Dimmed row + "ELIMINATED" badge
 
 ### Highlights Section
-- **Winner:** Gold glow effect
-- **Spooner:** Pink wobble effect
+- **Winner:** Gold glow effect (auto-detected or manual)
+- **Spooner:** Pink wobble effect (auto-detected or manual)
 - **Hall of Fame:** Ice-blue glow for past champions
 
 ## 🔄 Data Flow
@@ -104,13 +142,17 @@ Draft Machine → JSONBin ← Elimination League
                               ↓
                     fetchEliminatedTeams()
                               ↓
-                      renderPicks() with
-                      live elimination status
+                  detectWinnerAndSpooner()
+                              ↓
+                    renderPrizePot() +
+                    renderPicks() +
+                    applyHighlights()
 ```
 
 ### Auto-Refresh
 - Page refreshes ESPN data every **5 minutes**
 - Shows "Last Updated" timestamp in header
+- Prize pot and highlights update automatically
 
 ## 📱 Installation (PWA)
 
@@ -167,6 +209,11 @@ const CACHE_NAME = 'sb-league-v2';  // Increment this
 3. Check console for ESPN fetch errors
 4. **Update the fallback list** in `index.html` (see ESPN API section below)
 
+### Winner/Spooner not auto-detecting
+1. Check browser console for detection logs (`🔍 Winner/Spooner detection:`)
+2. Verify `ELIMINATION_ORDER` is updated with eliminated teams
+3. Ensure player picks match team names exactly
+
 ### PWA not updating
 1. Bump `CACHE_NAME` version in `sw.js`
 2. Close all tabs and reopen
@@ -193,6 +240,7 @@ const weekUrls = [
 - `week=1` = Wild Card, `week=2` = Divisional, etc.
 - Each week is fetched separately to ensure past rounds are included
 - Losers (`winner: false`) are marked as eliminated
+- Super Bowl winner (`winner: true` in week 5) triggers champion detection
 
 ### Fallback Eliminated Teams
 
@@ -219,12 +267,40 @@ The ESPN scoreboard API only returns the current week's games by default. While 
 
 ## 🎯 End of Season Checklist
 
-1. Update `config.json`:
-   - Set `highlight.winner` to winner's player ID
-   - Set `highlight.spoon` to last place player ID
-   - Add winner to `honorary` array
+1. **Auto-detection should handle most of this**, but verify:
+   - Winner shows in prize pot with crown
+   - Winner shows in Season Highlights
+   - Spooner shows in Season Highlights
 
-2. The Hall of Fame will automatically display all past winners
+2. Update `config.json` for Hall of Fame:
+   - Add winner to `honorary` array for permanent record:
+   ```json
+   "honorary": [
+     { "year": 2025, "player": "joe" },  // Add the winner's ID
+     { "year": 2024, "player": "ben" }
+   ]
+   ```
+
+3. The Hall of Fame will automatically display all past winners
+
+## 🔄 Maintenance: Updating After Each Round
+
+After each playoff round completes:
+
+1. **Verify eliminations show correctly** - Check the live site
+
+2. **Update ELIMINATION_ORDER** for spooner detection:
+   - Open `index.html`
+   - Find `ELIMINATION_ORDER` array
+   - Add the round's losing teams
+   - This ensures accurate spooner detection
+
+3. **If teams aren't showing as eliminated:**
+   - Find `KNOWN_ELIMINATED_TEAMS` array
+   - Add the losing teams with full names (e.g., "Buffalo Bills")
+   - Commit and push to GitHub
+
+4. **Bump service worker** - Increment `CACHE_NAME` in `sw.js` if users have cached the old version
 
 ## 📝 Differences from Draft Machine
 
@@ -235,18 +311,16 @@ The ESPN scoreboard API only returns the current week's games by default. While 
 | Data Source | ESPN standings | ESPN scoreboard |
 | Updates | Manual spins | Auto every 5 min |
 | JSONBin | Writes picks | Reads picks |
+| Prize Pot | N/A | Shows pot & auto-crowns winner |
 
-## 🔄 Maintenance: Updating After Each Round
+## 🆕 Recent Updates
 
-After each playoff round completes:
-
-1. **Verify eliminations show correctly** - Check the live site
-2. **If teams aren't showing as eliminated:**
-   - Open `index.html`
-   - Find `KNOWN_ELIMINATED_TEAMS` array
-   - Add the losing teams with full names (e.g., "Buffalo Bills")
-   - Commit and push to GitHub
-3. **Bump service worker** - Increment `CACHE_NAME` in `sw.js` if users have cached the old version
+### v2.0 - Prize Pot & Auto-Detection
+- ✨ **Prize Pot Display** - Shows total kitty with animated money rain
+- 🏆 **Auto Winner Detection** - Detects Super Bowl winner or last player standing
+- 🥄 **Auto Spooner Detection** - Tracks first player fully eliminated
+- 👑 **Champion Display** - Prize pot transforms to show winner when detected
+- 🔄 **Improved ESPN Fetching** - Now detects Super Bowl winner from API
 
 ---
 
