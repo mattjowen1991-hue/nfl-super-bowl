@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sb-league-v3';
+const CACHE_NAME = 'sb-league-v4';
 const STATIC_ASSETS = [
   './',
   './index.html',
