@@ -821,23 +821,25 @@
         }
       });
       
-      // Determine spooner (first player fully eliminated)
-      if (results.playersEliminated.length > 0) {
-        let earliestRoundIndex = Infinity;
+      // Determine spooner (player who picked the Super Bowl loser)
+      // Only set spooner after Super Bowl is complete
+      if (superBowlWinner) {
+        // Find the Super Bowl loser from ELIMINATION_ORDER
+        const superBowlRound = ELIMINATION_ORDER.find(r => r.round === 'Super Bowl');
+        const superBowlLoser = superBowlRound?.teams?.[0]; // The losing team
         
-        results.playersEliminated.forEach(({ player, afcTeam, nfcTeam }) => {
-          const afcRound = ELIMINATION_ORDER.findIndex(r => r.teams.includes(afcTeam));
-          const nfcRound = ELIMINATION_ORDER.findIndex(r => r.teams.includes(nfcTeam));
-          const lastTeamRoundIndex = Math.max(
-            afcRound >= 0 ? afcRound : 0,
-            nfcRound >= 0 ? nfcRound : 0
-          );
+        if (superBowlLoser) {
+          // Find player who picked the Super Bowl loser
+          const spoonerPlayer = players.find(p => {
+            const pk = picks[p.id] || {};
+            return pk.afcTeam === superBowlLoser || pk.nfcTeam === superBowlLoser;
+          });
           
-          if (lastTeamRoundIndex < earliestRoundIndex) {
-            earliestRoundIndex = lastTeamRoundIndex;
-            results.spooner = player;
+          if (spoonerPlayer) {
+            results.spooner = spoonerPlayer;
+            console.log(`🥄 Spooner: ${spoonerPlayer.name} (picked ${superBowlLoser})`);
           }
-        });
+        }
       }
       
       // Determine winner
