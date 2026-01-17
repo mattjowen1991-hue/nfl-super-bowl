@@ -370,11 +370,26 @@
     // ============================================
     // CONFIGURATION
     // ============================================
-    const ESPN_PLAYOFF_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=3';
+    // ESPN scoreboard endpoint - we'll fetch multiple weeks
+    const ESPN_BASE_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
     
     // JSONBin config - auto-syncs with Draft Machine
     const JSONBIN_BIN_ID = '695b078fd0ea881f4054b2a0';
     const JSONBIN_API_KEY = '$2a$10$C7BY0Kl0u74gNn/kXO7xNuayWv493/f1jAxlHUmx3ENADQKDii61C';
+    
+    // ============================================
+    // KNOWN ELIMINATED TEAMS (FALLBACK)
+    // Updated manually as backup - ESPN API sometimes doesn't return past weeks
+    // ============================================
+    const KNOWN_ELIMINATED_TEAMS = [
+      // Wild Card Round Losers (Jan 10-12, 2026)
+      'Pittsburgh Steelers',    // Lost to Texans 6-30
+      'Jacksonville Jaguars',   // Lost to Bills 24-27
+      'Los Angeles Chargers',   // Lost to Patriots 3-16
+      'Carolina Panthers',      // Lost to Rams 31-34
+      'Green Bay Packers',      // Lost to Bears 27-31
+      'Philadelphia Eagles',    // Lost to 49ers 19-23
+    ];
     
     // ============================================
     // FALLBACK DATA
@@ -432,11 +447,9 @@
         
         const data = await res.json();
         const record = data.record;
-const draftData = record?.picks || record;
+        const draftData = record?.picks || record;
         
         // Map draft machine format to league table format
-        // Draft machine stores: { joe: { afcTeam: "...", nfcTeam: "..." }, ... }
-        // We need the same format, so just return it directly
         if (draftData && typeof draftData === 'object') {
           const picks = {};
           for (const [playerId, playerData] of Object.entries(draftData)) {
@@ -469,18 +482,37 @@ const draftData = record?.picks || record;
     }
 
     // ============================================
-    // ESPN PLAYOFF DATA
+    // ESPN PLAYOFF DATA - FETCH ALL WEEKS
     // ============================================
     async function fetchEliminatedTeams() {
+      const eliminated = new Set();
+      let lastUpdated = '';
+      
       try {
-        const res = await fetch(ESPN_PLAYOFF_URL, { cache: 'no-store' });
-        if (!res.ok) throw new Error('ESPN fetch failed');
-        const data = await res.json();
+        // Fetch all playoff weeks (Wild Card = week 1, Divisional = week 2, etc.)
+        // We need to fetch each week separately to get completed games
+        const weekUrls = [
+          `${ESPN_BASE_URL}?seasontype=3&week=1`, // Wild Card
+          `${ESPN_BASE_URL}?seasontype=3&week=2`, // Divisional
+          `${ESPN_BASE_URL}?seasontype=3&week=3`, // Conference Championship
+          `${ESPN_BASE_URL}?seasontype=3&week=5`, // Super Bowl
+        ];
         
-        const eliminated = new Set();
+        // Fetch all weeks in parallel
+        const responses = await Promise.all(
+          weekUrls.map(url => 
+            fetch(url, { cache: 'no-store' })
+              .then(res => res.ok ? res.json() : null)
+              .catch(() => null)
+          )
+        );
         
-        // Loop through all playoff games
-        if (data.events) {
+        // Process each week's data
+        responses.forEach((data, index) => {
+          if (!data || !data.events) return;
+          
+          console.log(`📅 Processing playoff week ${index + 1}: ${data.events.length} games`);
+          
           data.events.forEach(event => {
             const competition = event.competitions?.[0];
             if (!competition) return;
@@ -490,25 +522,42 @@ const draftData = record?.picks || record;
               competition.competitors?.forEach(team => {
                 // Loser is eliminated
                 if (team.winner === false) {
-                  eliminated.add(team.team.displayName);
+                  const teamName = team.team.displayName;
+                  eliminated.add(teamName);
+                  console.log(`❌ ${teamName} eliminated`);
                 }
               });
             }
           });
+        });
+        
+        // If ESPN didn't return any eliminated teams, use our known list
+        if (eliminated.size === 0) {
+          console.log('⚠️ ESPN returned no eliminations, using known eliminated teams');
+          KNOWN_ELIMINATED_TEAMS.forEach(team => eliminated.add(team));
         }
+        
+        lastUpdated = new Date().toLocaleString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        console.log(`✅ Total eliminated teams: ${eliminated.size}`, Array.from(eliminated));
         
         return {
           eliminated: Array.from(eliminated),
-          lastUpdated: new Date().toLocaleString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
+          lastUpdated
         };
       } catch (err) {
         console.error('Error fetching ESPN data:', err);
-        return { eliminated: [], lastUpdated: 'Unable to fetch' };
+        // Fall back to known eliminated teams
+        console.log('⚠️ Using fallback eliminated teams list');
+        return { 
+          eliminated: [...KNOWN_ELIMINATED_TEAMS],
+          lastUpdated: 'Using cached data'
+        };
       }
     }
 
@@ -647,11 +696,10 @@ const draftData = record?.picks || record;
     async function init() {
       try {
         // Fetch all data in parallel
-        // Now fetching picks from JSONBin instead of picks.json
         const [players, config, picks, espnData] = await Promise.all([
           fetchJson('players.json', fallbackPlayers),
           fetchJson('config.json', fallbackConfig),
-          fetchPicksFromJsonBin(),  // <-- Changed to JSONBin
+          fetchPicksFromJsonBin(),
           fetchEliminatedTeams()
         ]);
 
@@ -677,7 +725,7 @@ const draftData = record?.picks || record;
       
       const [players, picks] = await Promise.all([
         fetchJson('players.json', fallbackPlayers),
-        fetchPicksFromJsonBin()  // <-- Changed to JSONBin
+        fetchPicksFromJsonBin()
       ]);
       
       renderPicks(players, picks, espnData.eliminated);
