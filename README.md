@@ -100,7 +100,7 @@ const JSONBIN_API_KEY = '$2a$10$C7BY0Kl0u74gNn/kXO7xNuayWv493/f1jAxlHUmx3ENADQKD
 ```
 Draft Machine → JSONBin ← Elimination League
                               ↓
-                         ESPN API
+                         ESPN API (all weeks)
                               ↓
                     fetchEliminatedTeams()
                               ↓
@@ -165,6 +165,7 @@ const CACHE_NAME = 'sb-league-v2';  // Increment this
 1. Check ESPN API is accessible
 2. Verify team names match exactly (e.g., "Buffalo Bills" not "Bills")
 3. Check console for ESPN fetch errors
+4. **Update the fallback list** in `index.html` (see ESPN API section below)
 
 ### PWA not updating
 1. Bump `CACHE_NAME` version in `sw.js`
@@ -177,14 +178,44 @@ const CACHE_NAME = 'sb-league-v2';  // Increment this
 
 ## 📊 ESPN API
 
-The app uses ESPN's scoreboard endpoint:
-```
-https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype=3
+The app fetches playoff data from ESPN's scoreboard endpoint for **each playoff week**:
+
+```javascript
+const weekUrls = [
+  `${ESPN_BASE_URL}?seasontype=3&week=1`, // Wild Card
+  `${ESPN_BASE_URL}?seasontype=3&week=2`, // Divisional
+  `${ESPN_BASE_URL}?seasontype=3&week=3`, // Conference Championship
+  `${ESPN_BASE_URL}?seasontype=3&week=5`, // Super Bowl
+];
 ```
 
 - `seasontype=3` = Playoffs
-- Returns all playoff games with completion status
+- `week=1` = Wild Card, `week=2` = Divisional, etc.
+- Each week is fetched separately to ensure past rounds are included
 - Losers (`winner: false`) are marked as eliminated
+
+### Fallback Eliminated Teams
+
+If the ESPN API fails or doesn't return data, the app uses a hardcoded fallback list. **Update this list after each playoff round:**
+
+```javascript
+const KNOWN_ELIMINATED_TEAMS = [
+  // Wild Card Round Losers (Jan 10-12, 2026)
+  'Pittsburgh Steelers',    // Lost to Texans 6-30
+  'Jacksonville Jaguars',   // Lost to Bills 24-27
+  'Los Angeles Chargers',   // Lost to Patriots 3-16
+  'Carolina Panthers',      // Lost to Rams 31-34
+  'Green Bay Packers',      // Lost to Bears 27-31
+  'Philadelphia Eagles',    // Lost to 49ers 19-23
+  
+  // Divisional Round Losers - ADD AFTER GAMES COMPLETE
+  // e.g., 'Buffalo Bills',
+  // e.g., 'Houston Texans',
+];
+```
+
+**Why is this needed?**
+The ESPN scoreboard API only returns the current week's games by default. While we now fetch all weeks explicitly, having a fallback ensures eliminations display correctly even if the API changes or fails.
 
 ## 🎯 End of Season Checklist
 
@@ -204,6 +235,18 @@ https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?seasontype
 | Data Source | ESPN standings | ESPN scoreboard |
 | Updates | Manual spins | Auto every 5 min |
 | JSONBin | Writes picks | Reads picks |
+
+## 🔄 Maintenance: Updating After Each Round
+
+After each playoff round completes:
+
+1. **Verify eliminations show correctly** - Check the live site
+2. **If teams aren't showing as eliminated:**
+   - Open `index.html`
+   - Find `KNOWN_ELIMINATED_TEAMS` array
+   - Add the losing teams with full names (e.g., "Buffalo Bills")
+   - Commit and push to GitHub
+3. **Bump service worker** - Increment `CACHE_NAME` in `sw.js` if users have cached the old version
 
 ---
 
