@@ -27,7 +27,7 @@ The app automatically detects the winner in two ways:
 2. **Last Player Standing** - If only one player has a team still alive, they're auto-crowned
 
 ### 🥄 Auto Spooner Detection
-The "spooner" (first player fully eliminated) is automatically detected based on the `ELIMINATION_ORDER` array, which tracks when teams were eliminated each round.
+The "spooner" is the player who picked the **Super Bowl losing team**. This is only detected after the Super Bowl is complete - until then, the Spooner section shows "TBD".
 
 ## 📁 File Structure
 
@@ -90,17 +90,17 @@ const ENTRY_FEE = 5; // £5 per player - change if your entry fee differs
 ```
 
 ### Elimination Order (for Spooner Detection)
-Update this array after each playoff round to track when teams were eliminated:
+Update this array after the Super Bowl to record the losing team:
 ```javascript
 const ELIMINATION_ORDER = [
-  { round: 'Wild Card', teams: ['Pittsburgh Steelers', 'Jacksonville Jaguars', 'Los Angeles Chargers', 'Carolina Panthers', 'Green Bay Packers', 'Philadelphia Eagles'] },
-  { round: 'Divisional', teams: ['Team1', 'Team2', 'Team3', 'Team4'] },  // Add after Divisional
-  { round: 'Conference', teams: ['Team1', 'Team2'] },                    // Add after Conference
-  { round: 'Super Bowl', teams: ['LosingTeam'] },                        // Add after Super Bowl
+  { round: 'Wild Card', teams: ['Pittsburgh Steelers', ...] },
+  { round: 'Divisional', teams: [...] },
+  { round: 'Conference', teams: [...] },
+  { round: 'Super Bowl', teams: ['Buffalo Bills'] },  // ← Add the Super Bowl LOSER here
 ];
 ```
 
-This determines who gets the 🥄 - the player whose last team was eliminated in the earliest round.
+The spooner is whoever picked the Super Bowl losing team. Only the `Super Bowl` entry matters for spooner detection - the earlier rounds are kept for historical reference.
 
 ### JSONBin Integration
 The app automatically fetches picks from JSONBin (shared with Draft Machine):
