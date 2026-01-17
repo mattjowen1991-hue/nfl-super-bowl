@@ -161,6 +161,159 @@
     75% { transform: rotate(-2deg); } 
   }
 
+    /* ---------------- Prize Pot Styles ---------------- */
+  .prize-pot-section {
+    margin-bottom: 1.5rem;
+  }
+  
+  .prize-pot-container {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+    border: 2px solid #d4af37;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    overflow: hidden;
+    box-shadow: 
+      0 0 30px rgba(212, 175, 55, 0.3),
+      inset 0 0 60px rgba(0, 0, 0, 0.5);
+  }
+  
+  .prize-pot-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(212, 175, 55, 0.1) 60deg,
+      transparent 120deg
+    );
+    animation: rotateBg 10s linear infinite;
+    pointer-events: none;
+  }
+  
+  @keyframes rotateBg {
+    to { transform: rotate(360deg); }
+  }
+  
+  .prize-pot-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .trophy-icon {
+    font-size: 4rem;
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.8));
+    animation: trophyBounce 2s ease-in-out infinite;
+  }
+  
+  @keyframes trophyBounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.05); }
+  }
+  
+  .prize-label {
+    font-family: 'Freshman', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .prize-amount {
+    font-family: 'Freshman', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #ffd700, #ffec8b, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    animation: amountPulse 3s ease-in-out infinite;
+  }
+  
+  @keyframes amountPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.9; }
+  }
+  
+  .prize-subtitle {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .champion-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .champion-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 4px solid #d4af37;
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+    animation: avatarPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes avatarPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
+    50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(212, 175, 55, 0.9); }
+  }
+
+  .winning-team-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+  }
+  
+  .money-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+  
+  .money {
+    position: absolute;
+    top: -50px;
+    font-size: 1.5rem;
+    opacity: 0.6;
+    animation: fall linear infinite;
+  }
+  
+  @keyframes fall {
+    0% { transform: translateY(-50px) rotate(0deg); opacity: 0.8; }
+    100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
+  }
+  
+  .money:nth-child(1) { left: 10%; animation-duration: 3s; animation-delay: 0s; }
+  .money:nth-child(2) { left: 25%; animation-duration: 3.5s; animation-delay: 0.5s; }
+  .money:nth-child(3) { left: 40%; animation-duration: 2.8s; animation-delay: 1s; }
+  .money:nth-child(4) { left: 55%; animation-duration: 3.2s; animation-delay: 0.3s; }
+  .money:nth-child(5) { left: 70%; animation-duration: 3.7s; animation-delay: 0.8s; }
+  .money:nth-child(6) { left: 85%; animation-duration: 3s; animation-delay: 1.2s; }
+  .money:nth-child(7) { left: 5%; animation-duration: 3.3s; animation-delay: 1.5s; }
+  .money:nth-child(8) { left: 95%; animation-duration: 2.9s; animation-delay: 0.2s; }
+
   /* ---------------- Table styling ---------------- */
   .picks-clean {
     background: rgba(0,0,0,.72);
@@ -222,6 +375,24 @@
     .mobile-stack {
       grid-template-columns: 1fr !important;
     }
+
+    .prize-amount {
+      font-size: 2.5rem;
+    }
+    .trophy-icon {
+      font-size: 3rem;
+    }
+    .prize-pot-container {
+      padding: 1.5rem;
+    }
+    .champion-avatar {
+      width: 60px;
+      height: 60px;
+    }
+    .winning-team-logo {
+      width: 40px;
+      height: 40px;
+    }
     .mobile-divider > * + * {
   border-left: 1px solid rgba(255,204,0,.55) !important;
   border-top: none;
@@ -280,6 +451,29 @@
   </header>
 
   <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
+
+    <!-- Prize Pot / Champion Section -->
+    <section id="prizePotSection" class="prize-pot-section">
+      <div class="prize-pot-container">
+        <div class="money-rain">
+          <span class="money">💵</span>
+          <span class="money">🏈</span>
+          <span class="money">💰</span>
+          <span class="money">🏈</span>
+          <span class="money">💷</span>
+          <span class="money">🏈</span>
+          <span class="money">💵</span>
+          <span class="money">🏈</span>
+        </div>
+        <div id="prizePotInner" class="prize-pot-inner">
+          <!-- Will be populated by JS -->
+          <div class="trophy-icon">🏆</div>
+          <div class="prize-label">Prize Pot</div>
+          <div class="prize-amount">£35</div>
+          <div class="prize-subtitle">7 Players × £5 Entry</div>
+        </div>
+      </div>
+    </section>
     
     <!-- Status Bar -->
     <div class="flex items-center justify-between mb-4 text-xs text-white/60">
@@ -376,6 +570,18 @@
     // JSONBin config - auto-syncs with Draft Machine
     const JSONBIN_BIN_ID = '695b078fd0ea881f4054b2a0';
     const JSONBIN_API_KEY = '$2a$10$C7BY0Kl0u74gNn/kXO7xNuayWv493/f1jAxlHUmx3ENADQKDii61C';
+
+    // Prize pot configuration
+    const ENTRY_FEE = 5; // £5 per player
+    
+    // Elimination order tracking (for spooner detection)
+    // Format: Array of { round: 'Wild Card', teams: ['Team1', 'Team2'] }
+    const ELIMINATION_ORDER = [
+      { round: 'Wild Card', teams: ['Pittsburgh Steelers', 'Jacksonville Jaguars', 'Los Angeles Chargers', 'Carolina Panthers', 'Green Bay Packers', 'Philadelphia Eagles'] },
+      // Add after Divisional: { round: 'Divisional', teams: ['Team1', 'Team2'] },
+      // Add after Conference: { round: 'Conference', teams: ['Team1', 'Team2'] },
+      // Add after Super Bowl: { round: 'Super Bowl', teams: ['LosingTeam'] },
+    ];
     
     // ============================================
     // KNOWN ELIMINATED TEAMS (FALLBACK)
@@ -486,11 +692,10 @@
     // ============================================
     async function fetchEliminatedTeams() {
       const eliminated = new Set();
+      let superBowlWinner = null;
       let lastUpdated = '';
       
       try {
-        // Fetch all playoff weeks (Wild Card = week 1, Divisional = week 2, etc.)
-        // We need to fetch each week separately to get completed games
         const weekUrls = [
           `${ESPN_BASE_URL}?seasontype=3&week=1`, // Wild Card
           `${ESPN_BASE_URL}?seasontype=3&week=2`, // Divisional
@@ -498,7 +703,6 @@
           `${ESPN_BASE_URL}?seasontype=3&week=5`, // Super Bowl
         ];
         
-        // Fetch all weeks in parallel
         const responses = await Promise.all(
           weekUrls.map(url => 
             fetch(url, { cache: 'no-store' })
@@ -507,7 +711,6 @@
           )
         );
         
-        // Process each week's data
         responses.forEach((data, index) => {
           if (!data || !data.events) return;
           
@@ -517,21 +720,23 @@
             const competition = event.competitions?.[0];
             if (!competition) return;
             
-            // Only check completed games
+            const isSuperBowl = index === 3;
+            
             if (competition.status?.type?.completed) {
               competition.competitors?.forEach(team => {
-                // Loser is eliminated
                 if (team.winner === false) {
                   const teamName = team.team.displayName;
                   eliminated.add(teamName);
                   console.log(`❌ ${teamName} eliminated`);
+                } else if (team.winner === true && isSuperBowl) {
+                  superBowlWinner = team.team.displayName;
+                  console.log(`🏆 Super Bowl Winner: ${superBowlWinner}`);
                 }
               });
             }
           });
         });
         
-        // If ESPN didn't return any eliminated teams, use our known list
         if (eliminated.size === 0) {
           console.log('⚠️ ESPN returned no eliminations, using known eliminated teams');
           KNOWN_ELIMINATED_TEAMS.forEach(team => eliminated.add(team));
@@ -544,20 +749,140 @@
           minute: '2-digit'
         });
         
-        console.log(`✅ Total eliminated teams: ${eliminated.size}`, Array.from(eliminated));
-        
         return {
           eliminated: Array.from(eliminated),
+          superBowlWinner,
           lastUpdated
         };
       } catch (err) {
         console.error('Error fetching ESPN data:', err);
-        // Fall back to known eliminated teams
-        console.log('⚠️ Using fallback eliminated teams list');
         return { 
           eliminated: [...KNOWN_ELIMINATED_TEAMS],
+          superBowlWinner: null,
           lastUpdated: 'Using cached data'
         };
+      }
+    }
+
+    // ============================================
+    // WINNER & SPOONER DETECTION
+    // ============================================
+    function detectWinnerAndSpooner(players, picks, eliminatedTeams, superBowlWinner) {
+      const elim = new Set(eliminatedTeams || []);
+      const results = {
+        winner: null,
+        winningTeam: null,
+        spooner: null,
+        playersAlive: [],
+        playersEliminated: []
+      };
+      
+      // Analyze each player's status
+      players.forEach(p => {
+        const pk = picks[p.id] || {};
+        const afcTeam = pk.afcTeam || 'TBC';
+        const nfcTeam = pk.nfcTeam || 'TBC';
+        
+        const afcIsTBC = afcTeam === 'TBC';
+        const nfcIsTBC = nfcTeam === 'TBC';
+        const afcElim = !afcIsTBC && elim.has(afcTeam);
+        const nfcElim = !nfcIsTBC && elim.has(nfcTeam);
+        
+        const bothEliminated = !afcIsTBC && !nfcIsTBC && afcElim && nfcElim;
+        const hasTeamAlive = (!afcIsTBC && !afcElim) || (!nfcIsTBC && !nfcElim);
+        
+        if (bothEliminated) {
+          results.playersEliminated.push({ player: p, afcTeam, nfcTeam });
+        } else if (hasTeamAlive) {
+          results.playersAlive.push({
+            player: p,
+            afcTeam: !afcElim ? afcTeam : null,
+            nfcTeam: !nfcElim ? nfcTeam : null
+          });
+        }
+      });
+      
+      // Determine spooner (first player fully eliminated)
+      if (results.playersEliminated.length > 0) {
+        let earliestRoundIndex = Infinity;
+        
+        results.playersEliminated.forEach(({ player, afcTeam, nfcTeam }) => {
+          const afcRound = ELIMINATION_ORDER.findIndex(r => r.teams.includes(afcTeam));
+          const nfcRound = ELIMINATION_ORDER.findIndex(r => r.teams.includes(nfcTeam));
+          const lastTeamRoundIndex = Math.max(
+            afcRound >= 0 ? afcRound : 0,
+            nfcRound >= 0 ? nfcRound : 0
+          );
+          
+          if (lastTeamRoundIndex < earliestRoundIndex) {
+            earliestRoundIndex = lastTeamRoundIndex;
+            results.spooner = player;
+          }
+        });
+      }
+      
+      // Determine winner
+      if (superBowlWinner) {
+        // Super Bowl winner detected - find player(s) who picked that team
+        const winningPlayer = players.find(p => {
+          const pk = picks[p.id] || {};
+          return pk.afcTeam === superBowlWinner || pk.nfcTeam === superBowlWinner;
+        });
+        if (winningPlayer) {
+          results.winner = winningPlayer;
+          results.winningTeam = superBowlWinner;
+        }
+      } else if (results.playersAlive.length === 1) {
+        // Only one player has a team still alive
+        results.winner = results.playersAlive[0].player;
+        results.winningTeam = results.playersAlive[0].afcTeam || results.playersAlive[0].nfcTeam;
+      }
+      
+      console.log('🔍 Winner/Spooner detection:', {
+        winner: results.winner?.name,
+        winningTeam: results.winningTeam,
+        spooner: results.spooner?.name,
+        playersAlive: results.playersAlive.length,
+        playersEliminated: results.playersEliminated.length
+      });
+      
+      return results;
+    }
+
+    // ============================================
+    // RENDER PRIZE POT / CHAMPION
+    // ============================================
+    function renderPrizePot(players, winner, winningTeam) {
+      const container = document.getElementById('prizePotInner');
+      const prizeAmount = players.length * ENTRY_FEE;
+      
+      if (winner && winningTeam) {
+        // Show champion display
+        const teamLogoPath = `Assets/teams/${slugifyTeam(winningTeam)}.png`;
+        
+        container.innerHTML = `
+          <div class="trophy-icon">👑</div>
+          <div class="champion-row">
+            <img src="${winner.avatar}" alt="${winner.name}" class="champion-avatar" 
+                 onerror="this.src='Assets/winnertbc.png'">
+            <div class="prize-amount">${winner.name}!</div>
+          </div>
+          <div class="prize-label">Super Bowl LX Champion</div>
+          <div class="flex items-center gap-3 mt-2">
+            <img src="${teamLogoPath}" alt="${winningTeam}" class="winning-team-logo"
+                 onerror="this.style.display='none'">
+            <div class="prize-subtitle">${winningTeam} 🏆</div>
+          </div>
+          <div class="text-amber-400 font-bold text-lg mt-2">£${prizeAmount} Won!</div>
+        `;
+      } else {
+        // Show prize pot (no winner yet)
+        container.innerHTML = `
+          <div class="trophy-icon">🏆</div>
+          <div class="prize-label">Prize Pot</div>
+          <div class="prize-amount">£${prizeAmount}</div>
+          <div class="prize-subtitle">${players.length} Players × £${ENTRY_FEE} Entry</div>
+        `;
       }
     }
 
@@ -639,10 +964,14 @@
     // ============================================
     // HIGHLIGHT & HALL OF FAME
     // ============================================
-    function applyHighlights(players, config) {
+   function applyHighlights(players, config, autoDetected) {
       const pIndex = indexBy(players);
       
-      function setHighlight(role, id) {
+      // Use auto-detected winner/spooner if available, otherwise fall back to config
+      const winnerId = autoDetected?.winner?.id || config?.highlight?.winner;
+      const spoonId = autoDetected?.spooner?.id || config?.highlight?.spoon;
+      
+      function setHighlight(role, id, teamOverride) {
         const elA = document.getElementById(role === 'winner' ? 'seasonWinnerAvatar' : 'seasonSpoonAvatar');
         const elN = document.getElementById(role === 'winner' ? 'seasonWinnerName' : 'seasonSpoonName');
         const elT = document.getElementById(role === 'winner' ? 'seasonWinnerTeam' : 'seasonSpoonTeam');
@@ -657,12 +986,12 @@
         if (p) {
           if (elA) elA.src = p.avatar;
           if (elN) elN.textContent = p.name;
-          if (elT) elT.textContent = p.team || '';
+          if (elT) elT.textContent = teamOverride || p.team || '';
         }
       }
       
-      setHighlight('winner', config?.highlight?.winner);
-      setHighlight('spoon', config?.highlight?.spoon);
+      setHighlight('winner', winnerId, autoDetected?.winningTeam);
+      setHighlight('spoon', spoonId);
 
       // Hall of Fame
       const hof = document.getElementById('hallOfFame');
@@ -689,13 +1018,12 @@
         });
       }
     }
-
+    
     // ============================================
     // INIT
     // ============================================
     async function init() {
       try {
-        // Fetch all data in parallel
         const [players, config, picks, espnData] = await Promise.all([
           fetchJson('players.json', fallbackPlayers),
           fetchJson('config.json', fallbackConfig),
@@ -706,8 +1034,19 @@
         // Update status
         document.getElementById('lastUpdated').textContent = `Updated: ${espnData.lastUpdated}`;
         
-        // Render everything
-        applyHighlights(players, config);
+        // Detect winner and spooner automatically
+        const autoDetected = detectWinnerAndSpooner(
+          players, 
+          picks, 
+          espnData.eliminated, 
+          espnData.superBowlWinner
+        );
+        
+        // Render prize pot or champion
+        renderPrizePot(players, autoDetected.winner, autoDetected.winningTeam);
+        
+        // Render everything else
+        applyHighlights(players, config, autoDetected);
         renderPicks(players, picks, espnData.eliminated);
         
       } catch (err) {
@@ -720,14 +1059,22 @@
 
     // Auto-refresh every 5 minutes
     setInterval(async () => {
-      const espnData = await fetchEliminatedTeams();
-      document.getElementById('lastUpdated').textContent = `Updated: ${espnData.lastUpdated}`;
-      
-      const [players, picks] = await Promise.all([
+      const [players, picks, espnData] = await Promise.all([
         fetchJson('players.json', fallbackPlayers),
-        fetchPicksFromJsonBin()
+        fetchPicksFromJsonBin(),
+        fetchEliminatedTeams()
       ]);
       
+      document.getElementById('lastUpdated').textContent = `Updated: ${espnData.lastUpdated}`;
+      
+      const autoDetected = detectWinnerAndSpooner(
+        players, 
+        picks, 
+        espnData.eliminated, 
+        espnData.superBowlWinner
+      );
+      
+      renderPrizePot(players, autoDetected.winner, autoDetected.winningTeam);
       renderPicks(players, picks, espnData.eliminated);
     }, 5 * 60 * 1000);
 
