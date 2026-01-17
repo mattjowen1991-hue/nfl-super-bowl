@@ -102,13 +102,16 @@
     background: linear-gradient(135deg, #ff4444, #ff6600);
     color: white;
     font-family: 'Freshman', sans-serif;
-    font-size: 0.6rem;
-    padding: 2px 8px;
-    border-radius: 4px;
+    font-size: 0.5rem;
+    padding: 1px 4px;
+    border-radius: 3px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
     animation: badgePulse 1.5s ease-in-out infinite;
     white-space: nowrap;
+    display: block;
+    width: fit-content;
+    margin-top: 2px;
   }
   @keyframes badgePulse {
     0%, 100% { box-shadow: 0 0 8px rgba(255,69,0,.6); }
@@ -341,12 +344,16 @@
   /* ---------------- Mobile Responsive ---------------- */
   @media (max-width: 640px) {
   .table-grid th, .table-grid td {
-    padding: 10px 8px;
-    font-size: 0.85rem;
+    padding: 8px 4px;
+    font-size: 0.75rem;
     text-align: center;
   }
   .table-grid td:first-child {
     text-align: left;
+    max-width: 90px;
+  }
+  .table-grid td:first-child .font-semibold {
+    font-size: 0.7rem;
   }
     .table-grid .team-logo-small {
       width: 20px;
@@ -394,11 +401,23 @@
       height: 40px;
     }
     .mobile-divider > * + * {
-  border-left: 1px solid rgba(255,204,0,.55) !important;
-  border-top: none;
-  padding-top: 0;
-  margin-top: 0;
-}
+      border-left: 1px solid rgba(255,204,0,.55) !important;
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    
+    /* Center the Season Highlights content on mobile */
+    .mobile-divider > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .mobile-divider .flex.items-center {
+      justify-content: center;
+    }
   }
 
   /* Loading spinner */
